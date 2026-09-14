@@ -2122,6 +2122,98 @@
     html:not([lang="zh-TW"]) .compact-row { flex-wrap: wrap; }
     html:not([lang="zh-TW"]) .compact-label { flex-basis: 100%; }
     html:not([lang="zh-TW"]) .nudge-pad button { padding-inline: 2px; font-size: 12px; }
+  
+
+    /* Score submission */
+    .score-submit-inline {
+      margin-top: 12px;
+      padding: 11px 12px;
+      border: 1px solid #cfe2dc;
+      border-radius: 15px;
+      background: rgba(240,248,245,.88);
+    }
+
+    .score-submit-inline-title {
+      margin-bottom: 8px;
+      color: #17634f;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .score-submit-inline-fields {
+      display: grid;
+      grid-template-columns: minmax(95px,.7fr) minmax(90px,.65fr) minmax(130px,1fr);
+      gap: 8px;
+      align-items: end;
+    }
+
+    .score-submit-inline-fields label {
+      margin: 0;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .score-submit-inline-fields input {
+      width: 100%;
+      min-height: 38px;
+      margin-top: 4px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #fff;
+      color: var(--text);
+      padding: 7px 9px;
+      font: inherit;
+      font-size: 14px;
+    }
+
+    .score-submit-preview {
+      margin-top: 8px;
+      color: #52636c;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .score-submit-btn {
+      border-color: #a7d2c2;
+      background: #dff2ea;
+      color: #17634f;
+    }
+
+    .score-submit-btn:disabled {
+      opacity: .55;
+      cursor: wait;
+      transform: none;
+    }
+
+    .score-submit-status {
+      margin: 6px 0 0;
+      min-height: 1.3em;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: right;
+    }
+
+    @media (max-width: 640px) {
+      .score-submit-inline-fields {
+        grid-template-columns: 1fr 1fr;
+      }
+      .score-submit-inline-fields label:last-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .score-submit-inline-fields {
+        grid-template-columns: 1fr;
+      }
+      .score-submit-inline-fields label:last-child {
+        grid-column: auto;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2398,10 +2490,28 @@
               </div>
               <h3 class="learning-diagnosis-title">學習診斷與觀念修正建議</h3>
               <div class="learning-diagnosis-list" id="learningDiagnosisList"></div>
+              <div class="score-submit-inline">
+                <div class="score-submit-inline-title">成績繳交</div>
+                <div class="score-submit-inline-fields">
+                  <label>班級
+                    <input id="scoreClassInput" type="text" inputmode="numeric" value="710" autocomplete="off" />
+                  </label>
+                  <label>座號
+                    <input id="scoreSeatInput" type="number" inputmode="numeric" min="1" max="99" placeholder="例如：12" autocomplete="off" />
+                  </label>
+                  <label>姓名
+                    <input id="scoreNameInput" type="text" maxlength="30" placeholder="請輸入姓名" autocomplete="off" />
+                  </label>
+                </div>
+                <div id="scoreSubmitPreview" class="score-submit-preview"></div>
+              </div>
+
               <div class="learning-result-actions">
                 <button id="reviewLearningBtn" type="button">複習需加強關卡</button>
+                <button id="scoreSubmitBtn" class="score-submit-btn" type="button">繳交成績</button>
                 <button id="restartLearningBtn" class="primary-btn" type="button">重新挑戰</button>
               </div>
+              <p id="scoreSubmitStatus" class="score-submit-status" aria-live="polite"></p>
             </section>
             <button id="exitLearningBtn" class="wide" type="button">離開學習模式</button>
           </div>
@@ -2417,11 +2527,14 @@
           </ol>
         </section>
       </aside>
+
     </main>
   </div>
 
   <script>
     let currentLanguage = "zh-TW";
+    const MICROSCOPE_SUBMIT_URL = "https://script.google.com/macros/s/AKfycbwAbUHGSJRgADmu0_sHIzKCAhoT-5ETJbXq8fBuddrMS3hNrjXCFS_tkEc_ZOR6IA5x/exec";
+    const MICROSCOPE_ACTIVITY_ID = "microscope_202609";
     const translations = {
       "複式顯微鏡模擬｜學習模式版": ["Compound Microscope Simulator | Learning Mode", "複式顕微鏡シミュレーター｜学習モード"],
       "複式顯微鏡模擬": ["Compound Microscope Simulator", "複式顕微鏡シミュレーター"],
@@ -2486,7 +2599,7 @@
       "拖曳玻片或使用方向按鈕移動標本；點選目鏡、物鏡、調節輪或光源，可展開調整選項，再點一次收合。鍵盤可用 Tab 選取構造、Enter 展開，方向鍵調整滑桿。": ["Drag the slide or use the arrow buttons. Select the eyepiece, objective, focus knobs or light to show adjustments; select it again to close them. Use Tab to focus a part, Enter to open it and arrow keys to adjust sliders.", "スライドをドラッグするか矢印ボタンで標本を動かします。接眼レンズ・対物レンズ・調節ねじ・光源を選ぶと調整欄が開き、もう一度選ぶと閉じます。Tabで各部を選択し、Enterで開き、矢印キーでスライダーを調整できます。"],
       "學習流程：預測 → 操作與觀察 → 作答 → 診斷。八關可自由切換；提交答案後才能選擇下一步。情境按鈕用於示範，學習中使用後請按「重試本關」再親自完成。": ["Learning: predict → operate and observe → answer → diagnosis. Jump freely between eight levels. Submit an answer to unlock Next. Scenarios are demonstrations, not evidence of your work; select Retry this level afterward to complete the steps yourself.", "学習の流れ：予測 → 操作と観察 → 解答 → 診断。8ステップは自由に切り替えられます。解答を提出すると次へ進めます。場面設定は実演用です。学習中に使った場合は「このステップをやり直す」を押し、自分で操作してください。"],
       "40x 下若載物台過度靠近物鏡，系統會提醒並停止繼續靠近；反向調整仍可退回。這是教學模擬保護界線，不代表實際儀器的安全距離。": ["At 40x, moving the stage too close to the objective triggers a warning and stops further approach. You can still move it away. This teaching boundary is not a safe-distance specification for real equipment.", "40xでステージが対物レンズに近づきすぎると警告し、それ以上の接近を止めます。逆方向には戻せます。これは学習用の保護境界であり、実機の安全距離を示すものではありません。"],
-      "完成八關後，請將操作技能與概念理解兩項分數自行回報老師。本頁不保存或上傳成績，重新整理後會重置。": ["After all eight levels, report both your operation and concept scores to your teacher. Scores are not saved or uploaded; reloading clears them.", "8ステップ終了後、操作技能と概念理解の2つの点数を先生に報告してください。成績は保存・送信されず、再読み込みで消去されます。"],
+      "完成八關後，請填寫班級、座號與姓名，再按「繳交成績」將本次結果送給老師。重新整理後本頁成績仍會重置。": ["After all eight levels, select Submit score in the results, enter your class and seat number, and send the result to your teacher. Reloading still resets the scores on this page.", "8ステップ終了後、学習結果の「成績を提出」を押し、クラスと出席番号を入力して先生へ送信できます。再読み込みすると、このページの成績はリセットされます。"],
       "計分方式與使用提醒": ["Scoring and reminders", "採点方法と注意事項"],
       "操作每關 100 分：指定順序錯誤扣 20 分、違反本關操作條件扣 20 分、觸發碰撞保護扣 20 分，各類每關最多扣一次。未完成操作不能提交。預測、速度、滑桿次數、正常探索與重試不扣分。概念題依選對比例給分，誤選扣同等分數，最低 0 分。兩項總分分別取八關平均。重新整理會清除本次成績。": ["Operations start at 100 per level. Wrong order, breaking a fixed condition and triggering collision protection each cost 20 points, at most once per category per level. Complete the operation before submitting. Predictions, speed, slider use, normal exploration and retries do not cost points. Concept scores credit correct choices and subtract the same amount for incorrect choices, with a minimum of 0. Each overall score is the average of eight levels. Reloading clears scores.", "操作は各ステップ100点から開始。順序違反、指定条件違反、衝突保護の作動は各20点減点で、各種類につき1回までです。操作を完了するまで解答は提出できません。予測・速さ・スライダーの操作回数・通常の探索・再試行では減点しません。概念問題は正しい選択の割合で加点し、誤選択は同じ配点で減点します（最低0点）。総合点はそれぞれ8ステップの平均です。再読み込みで成績は消去されます。"],
       "1. 先預測（不計分）": ["1. Predict (not scored)", "1. 予測する（採点なし）"],
@@ -2503,6 +2616,14 @@
       "學習成果": ["Learning results", "学習結果"],
       "學習診斷與觀念修正建議": ["Learning diagnosis and concept feedback", "学習診断と考え方の見直し"],
       "重新挑戰": ["Start a new challenge", "もう一度挑戦"],
+      "繳交成績": ["Submit score", "成績を提出"],
+      "成績繳交": ["Submit learning results", "成績提出"],
+      "班級": ["Class", "クラス"],
+      "座號": ["Seat number", "出席番号"],
+      "姓名": ["Name", "氏名"],
+      "取消": ["Cancel", "キャンセル"],
+      "送出": ["Submit", "送信"],
+      "完成 8 關後，輸入班級與座號即可將本次學習成果送至老師的試算表。": ["After completing all 8 levels, enter your class and seat number to send your results to the teacher.", "8ステップ完了後、クラスと出席番号を入力して学習結果を先生へ送信できます。"],
       "回到關卡": ["Return to levels", "ステップに戻る"],
       "複習需加強關卡": ["Review weaker levels", "苦手なステップを復習"],
       "明亮": ["Bright", "明るい"],
@@ -2540,7 +2661,7 @@
       "建議重新練習核心概念": ["Review the core concepts", "重要な概念を復習しましょう"],
       "先從得分最低的關卡開始複習，配合操作對照下方觀念整理。": ["Start with your lowest-scoring level and compare your observations with the concept feedback.", "最も点数の低いステップから復習し、操作と下の解説を照らし合わせましょう。"],
       "回報老師：已完成 8／8 關｜操作技能 {operation}／100｜概念理解 {concept}／100": ["Report to teacher: 8/8 completed | Operation skills {operation}/100 | Concepts {concept}/100", "先生への報告：8/8 完了｜操作技能 {operation}/100｜概念理解 {concept}/100"],
-      "已完成全部 {total} 關，其中 {perfect} 關概念題全對。{summary} 兩項分數分別取八關平均。請自行回報老師，重新整理後成績會清除。": ["All {total} levels completed; {perfect} perfect concept scores. {summary} Each score averages eight levels. Report them to your teacher; reloading clears results.", "全{total}ステップを完了し、{perfect}ステップの概念問題が全問正解でした。{summary} 2つの点数はそれぞれ8ステップの平均です。先生に報告してください。再読み込みで成績は消去されます。"],
+      "已完成全部 {total} 關，其中 {perfect} 關概念題全對。{summary} 兩項分數分別取八關平均。可按「繳交成績」將本次結果送給老師。": ["All {total} levels completed; {perfect} perfect concept scores. {summary} Each score averages eight levels. Select Submit score to send this result to your teacher.", "全{total}ステップを完了し、{perfect}ステップの概念問題が全問正解でした。{summary} 2つの点数はそれぞれ8ステップの平均です。「成績を提出」で先生へ送信できます。"],
       "觀念修正：{explanation}": ["Concept review: {explanation}", "考え方の見直し：{explanation}"],
       "本關觀念掌握完整。": ["You understand this level's concepts fully.", "このステップの概念を十分に理解できています。"],
       "漏選的正確觀念：": ["Missed correct concepts: ", "選び忘れた正しい考え方："],
@@ -2565,6 +2686,13 @@
       "尚未完成操作。": ["Operation not complete.", "操作がまだ完了していません。"],
       "請先依照任務調整指定構造，再提交答案。": ["Adjust the required part as instructed before submitting.", "課題に従って指定の部分を調整してから提出してください。"],
       "請至少選擇一個答案。": ["Select at least one answer.", "少なくとも1つ選んでください。"],
+      "尚未完成全部關卡，無法繳交成績。": ["Complete all levels before submitting your score.", "すべてのステップを完了してから成績を提出してください。"],
+      "請輸入班級與座號。": ["Enter your class and seat number.", "クラスと出席番号を入力してください。"],
+      "請輸入正確座號。": ["Enter a valid seat number.", "正しい出席番号を入力してください。"],
+      "送出中…": ["Submitting…", "送信中…"],
+      "成績已送出。若再次繳交，老師端會以最後一次資料為準。": ["Score submitted. If you submit again, the teacher view will use your latest submission.", "成績を送信しました。再提出した場合、先生の画面では最新の提出が使用されます。"],
+      "送出失敗，請檢查網路後再試一次。": ["Submission failed. Check your connection and try again.", "送信に失敗しました。ネットワークを確認してもう一度お試しください。"],
+      "已完成 8／8 關｜操作技能 {operation}／100｜概念理解 {concept}／100": ["8/8 completed | Operation skills {operation}/100 | Concepts {concept}/100", "8/8 完了｜操作技能 {operation}/100｜概念理解 {concept}/100"],
       "已停止向上：物鏡可能碰撞玻片。請將粗調往正值退回，並使用細調對焦。（教學模擬界線）": ["Upward motion stopped: the objective could hit the slide. Move coarse focus toward positive values to retreat, then use fine focus. (Teaching simulation boundary)", "上昇を停止：対物レンズがスライドに接触するおそれがあります。粗動を正の値へ戻し、微動でピントを合わせてください。（学習用の保護境界）"],
       "物鏡接近玻片，請勿繼續向上粗調；可反向退回或使用細調。（教學模擬界線）": ["The objective is close to the slide. Stop raising the stage with coarse focus; retreat or use fine focus. (Teaching simulation boundary)", "対物レンズがスライドに近づいています。粗動でさらに上げず、逆方向に戻すか微動を使ってください。（学習用の保護境界）"],
       "操作順序需要修正：依畫面步驟先完成前置操作，再進行下一步。": ["Review the order: complete the prerequisite before the next step.", "操作順序を見直しましょう。画面の手順に従い、前の操作を完了してから次へ進んでください。"],
@@ -2705,7 +2833,7 @@
       <p>拖曳玻片或使用方向按鈕移動標本；點選目鏡、物鏡、調節輪或光源，可展開調整選項，再點一次收合。鍵盤可用 Tab 選取構造、Enter 展開，方向鍵調整滑桿。</p>
       <p>學習流程：預測 → 操作與觀察 → 作答 → 診斷。八關可自由切換；提交答案後才能選擇下一步。情境按鈕用於示範，學習中使用後請按「重試本關」再親自完成。</p>
       <p>40x 下若載物台過度靠近物鏡，系統會提醒並停止繼續靠近；反向調整仍可退回。這是教學模擬保護界線，不代表實際儀器的安全距離。</p>
-      <p>完成八關後，請將操作技能與概念理解兩項分數自行回報老師。本頁不保存或上傳成績，重新整理後會重置。</p>`;
+      <p>完成八關後，請填寫班級、座號與姓名，再按「繳交成績」將本次結果送給老師。重新整理後本頁成績仍會重置。</p>`;
     bottomControlsEl.append(helpPanel);
 
     if (mainGridEl) mainGridEl.replaceWith(workspaceGridEl);
@@ -2820,6 +2948,12 @@
     const observationSummary = document.getElementById("observationSummary");
     const learningOperationScore = document.getElementById("learningOperationScore");
     const scoreReport = document.getElementById("scoreReport");
+    const scoreSubmitBtn = document.getElementById("scoreSubmitBtn");
+    const scoreSubmitStatus = document.getElementById("scoreSubmitStatus");
+    const scoreClassInput = document.getElementById("scoreClassInput");
+    const scoreSeatInput = document.getElementById("scoreSeatInput");
+    const scoreNameInput = document.getElementById("scoreNameInput");
+    const scoreSubmitPreview = document.getElementById("scoreSubmitPreview");
 
     let slideX = 0;
     let slideY = 0;
@@ -3732,7 +3866,11 @@
       learningOperationScore.textContent = operationScore;
       scoreReport.textContent = t("回報老師：已完成 8／8 關｜操作技能 {operation}／100｜概念理解 {concept}／100", { operation: operationScore, concept: totalScore });
       learningResultTitle.textContent = t(assessment.title);
-      learningResultSummary.textContent = t("已完成全部 {total} 關，其中 {perfect} 關概念題全對。{summary} 兩項分數分別取八關平均。請自行回報老師，重新整理後成績會清除。", { total: learningSteps.length, perfect: perfectCount, summary: t(assessment.summary) });
+      learningResultSummary.textContent = t("已完成全部 {total} 關，其中 {perfect} 關概念題全對。{summary} 兩項分數分別取八關平均。請填寫班級、座號與姓名後繳交成績。", { total: learningSteps.length, perfect: perfectCount, summary: t(assessment.summary) });
+      if (scoreClassInput && !scoreClassInput.value.trim()) {
+        scoreClassInput.value = localStorage.getItem("microscopeClassName") || "710";
+      }
+      updateScoreSubmitPreview();
       learningDiagnosisList.innerHTML = learningSteps.map((_, index) => {
         const step = getLearningStep(index);
         const result = learningResults[index];
@@ -3758,6 +3896,148 @@
       reviewLearningBtn.textContent = t(perfectCount === learningSteps.length && operationScore === 100 ? "回到關卡" : "複習需加強關卡");
       resetBtn.textContent = t("重新開始模擬");
       renderLearningStepNav();
+    }
+
+
+    function getLearningScoreSummary() {
+      const completedSteps = getCompletedLearningCount();
+      const conceptScoreAvg = completedSteps
+        ? Math.round(learningResults.filter(Boolean).reduce((sum, result) => sum + result.score, 0) / completedSteps)
+        : 0;
+      const operationScoreAvg = completedSteps
+        ? Math.round(learningResults.filter(Boolean).reduce((sum, result) => sum + result.operationScore, 0) / completedSteps)
+        : 0;
+      return { completedSteps, conceptScoreAvg, operationScoreAvg };
+    }
+
+    function updateScoreSubmitPreview() {
+      if (!scoreSubmitPreview) return;
+      const summary = getLearningScoreSummary();
+
+      if (summary.completedSteps !== learningSteps.length) {
+        scoreSubmitPreview.textContent = `完成 ${summary.completedSteps}／${learningSteps.length} 關後即可繳交。`;
+        return;
+      }
+
+      scoreSubmitPreview.textContent =
+        `已完成 ${learningSteps.length}／${learningSteps.length} 關｜操作技能 ${summary.operationScoreAvg}／100｜概念理解 ${summary.conceptScoreAvg}／100`;
+    }
+
+    function buildScoreSubmissionPayload(className, seatNo, studentName) {
+      const summary = getLearningScoreSummary();
+      const weak = [];
+
+      const stepResponses = learningSteps.map((step, index) => {
+        const result = learningResults[index];
+        const attempt = learningAttempts[index] || {};
+        const needsReview = !result || result.score < 100 || result.operationScore < 100;
+
+        if (needsReview) weak.push({ id: step.id, title: step.title });
+
+        return {
+          stepIndex: index + 1,
+          stepId: step.id,
+          stepTitle: step.title,
+          predictionQuestion: step.prediction.question,
+          predictionAnswer: result?.prediction === null || result?.prediction === undefined
+            ? ""
+            : step.prediction.options[result.prediction],
+          predictionCorrect: result?.prediction === step.prediction.answer,
+          operationCompleted: Boolean(attempt.completed),
+          operationScore: result?.operationScore ?? 0,
+          operationErrors: (result?.issues || []).map(code => operationIssueText[code] || code).join("；"),
+          conceptQuestion: step.question,
+          conceptAnswer: (result?.selected || []).map(optionIndex => step.options[optionIndex]).join("；"),
+          correctAnswer: step.answers.map(optionIndex => step.options[optionIndex]).join("；"),
+          conceptScore: result?.score ?? 0,
+          isConceptCorrect: Boolean(result?.isAllCorrect),
+          explanation: step.explanation,
+          needsReview,
+          timeSpentSec: "",
+          retryCount: ""
+        };
+      });
+
+      const now = new Date();
+      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      const submissionId = `microscope_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
+      return {
+        type: "microscope_learning_submission",
+        submissionId,
+        activityId: MICROSCOPE_ACTIVITY_ID,
+        className,
+        seatNo: String(seatNo),
+        studentName,
+        date: localDate,
+        pageUrl: location.href,
+        totalSteps: learningSteps.length,
+        completedSteps: summary.completedSteps,
+        operationScoreAvg: summary.operationScoreAvg,
+        conceptScoreAvg: summary.conceptScoreAvg,
+        totalScoreAvg: Math.round((summary.operationScoreAvg + summary.conceptScoreAvg) / 2),
+        weakStepIds: weak.map(item => item.id).join(","),
+        weakStepTitles: weak.map(item => item.title).join("、"),
+        steps: stepResponses
+      };
+    }
+
+    async function submitLearningScore() {
+      if (getCompletedLearningCount() !== learningSteps.length) {
+        scoreSubmitStatus.textContent = "尚未完成全部關卡，無法繳交成績。";
+        return;
+      }
+
+      const className = scoreClassInput.value.trim();
+      const seatNo = Number(scoreSeatInput.value);
+      const studentName = scoreNameInput.value.trim();
+
+      if (!className) {
+        scoreSubmitStatus.textContent = "請輸入班級。";
+        scoreClassInput.focus();
+        return;
+      }
+
+      if (!Number.isInteger(seatNo) || seatNo < 1 || seatNo > 99) {
+        scoreSubmitStatus.textContent = "請輸入正確座號。";
+        scoreSeatInput.focus();
+        return;
+      }
+
+      if (!studentName) {
+        scoreSubmitStatus.textContent = "請輸入姓名。";
+        scoreNameInput.focus();
+        return;
+      }
+
+      const payload = buildScoreSubmissionPayload(className, seatNo, studentName);
+
+      scoreSubmitBtn.disabled = true;
+      scoreClassInput.disabled = true;
+      scoreSeatInput.disabled = true;
+      scoreNameInput.disabled = true;
+      scoreSubmitStatus.textContent = "送出中…";
+
+      try {
+        await fetch(MICROSCOPE_SUBMIT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+          keepalive: true
+        });
+
+        localStorage.setItem("microscopeClassName", className);
+        scoreSubmitStatus.textContent = "成績已送出。若再次繳交，老師端會以最後一次資料為準。";
+      } catch (error) {
+        console.error(error);
+        scoreSubmitStatus.textContent = "送出失敗，請檢查網路後再試一次。";
+      } finally {
+        scoreSubmitBtn.disabled = false;
+        scoreClassInput.disabled = false;
+        scoreSeatInput.disabled = false;
+        scoreNameInput.disabled = false;
+      }
     }
 
     function startLearningMode() {
@@ -4308,6 +4588,12 @@
       resetLearningProgress();
       loadLearningStep(0);
     });
+    scoreSubmitBtn.addEventListener("click", submitLearningScore);
+    [scoreClassInput, scoreSeatInput, scoreNameInput].forEach((input) => {
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") submitLearningScore();
+      });
+    });
 
     window.addEventListener("keydown", (event) => {
       const activeTag = document.activeElement?.tagName?.toLowerCase();
@@ -4367,6 +4653,9 @@
       const button = event.target.closest("[data-language]");
       if (button) setLanguage(button.dataset.language);
     });
+
+    scoreClassInput.value = localStorage.getItem("microscopeClassName") || scoreClassInput.value || "710";
+    updateScoreSubmitPreview();
 
     updateSpecimen();
     setSlidePosition(0, 0);
