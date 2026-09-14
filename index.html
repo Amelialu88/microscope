@@ -53,6 +53,7 @@
       min-height: 100dvh;
       display: grid;
       grid-template-rows: auto auto auto;
+      align-content: start;
       gap: 10px;
       width: min(1500px, 100%);
       margin: 0 auto;
@@ -646,7 +647,7 @@
     .objective.center { left:62px; }
     .objective.left { left:44px; transform:rotate(22deg); transform-origin:top center; }
     .objective.right { left:80px; transform:rotate(-22deg); transform-origin:top center; }
-    .stage-mini { position:absolute; left:34px; top:184px; width:72px; height:12px; background:#374151; border-radius:5px; transition:transform .15s ease; }
+    .stage-mini { position:absolute; left:34px; top:202px; width:72px; height:12px; background:#374151; border-radius:5px; transition:transform .15s ease; }
     .focus-knob-big, .focus-knob-small { position:absolute; border-radius:50%; background:#6b7280; border:4px solid #4b5563; }
     .focus-knob-big { left:4px; top:165px; width:36px; height:36px; }
     .focus-knob-small { left:15px; top:176px; width:16px; height:16px; background:#9ca3af; }
@@ -1105,6 +1106,32 @@
       gap: 9px;
     }
 
+    .operation-checklist { margin: 0; padding-left: 24px; font-size: 13px; line-height: 1.7; }
+    .operation-checklist .done { color: #20705a; }
+    .operation-checklist .current { font-weight: 800; color: #285f9f; }
+    .learning-phase-label { margin: 0; color: #285f9f; font-size: 13px; font-weight: 800; }
+    .learning-notice, .simulation-warning {
+      margin: 0;
+      padding: 10px 12px;
+      border: 1px solid #efd9a9;
+      border-radius: 12px;
+      background: var(--amber-soft);
+      color: #7a571b;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .simulation-warning { margin: 0 12px 12px; }
+    .simulation-help { width: 100%; font-size: 13px; line-height: 1.6; }
+    .simulation-help summary { cursor: pointer; font-weight: 800; width: fit-content; padding: 8px 0; }
+    .simulation-help p { margin: 6px 0; }
+    .score-pair { display: flex; flex-wrap: wrap; gap: 12px; }
+    .score-pair > div { text-align: center; }
+    .score-pair p { font-weight: 800; font-size: 13px; }
+    .score-report { grid-column: 1 / -1; width: 100%; padding: 10px; color: #20705a; background: white; border-radius: 10px; font-weight: 800; user-select: all; }
+    .learning-diagnosis-item p + p { margin-top: 6px; }
+    .learning-score-rules { font-size: 12px; line-height: 1.6; color: var(--muted); }
+    .learning-score-rules summary { cursor: pointer; }
+
     .operation-guide {
       padding: 9px 10px;
       border: 1px dashed #b7d9cc;
@@ -1156,6 +1183,46 @@
       margin: 0;
       font-size: 16px;
       line-height: 1.25;
+    }
+
+    .learning-step-nav {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(36px, 1fr));
+      gap: 6px;
+    }
+
+    .learning-step-button {
+      position: relative;
+      min-width: 0;
+      min-height: 36px;
+      padding: 5px;
+      border-radius: 10px;
+      background: #f8fafc;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .learning-step-button.is-active {
+      border-color: var(--blue);
+      color: #285f9f;
+      box-shadow: inset 0 0 0 1px rgba(75,131,194,.2);
+    }
+
+    .learning-step-button.is-complete {
+      border-color: #b7d9cc;
+      background: var(--green-soft);
+      color: #20705a;
+    }
+
+    .learning-step-button.is-complete.has-errors {
+      border-color: #efd9a9;
+      background: var(--amber-soft);
+      color: #7a571b;
+    }
+
+    .learning-step-button.is-active {
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
     }
 
     .learning-instruction,
@@ -1238,8 +1305,107 @@
       gap: 7px;
     }
 
-    .learning-actions .wide {
+    .learning-actions button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .learning-result {
       grid-column: 1 / -1;
+      display: grid;
+      gap: 14px;
+    }
+
+    .learning-result-overview {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid #b7d9cc;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(232,245,239,.92), rgba(237,245,255,.8));
+    }
+
+    .learning-result-score {
+      display: grid;
+      width: 94px;
+      aspect-ratio: 1;
+      place-content: center;
+      border: 8px solid rgba(60,143,119,.2);
+      border-radius: 50%;
+      background: #fff;
+      color: #20705a;
+      text-align: center;
+    }
+
+    .learning-result-score strong {
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .learning-result-score span {
+      margin-top: 3px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .learning-result-overview h3 {
+      margin: 0 0 5px;
+      font-size: 20px;
+    }
+
+    .learning-result-overview p {
+      margin: 0;
+      color: #475569;
+      line-height: 1.55;
+    }
+
+    .learning-diagnosis-title {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .learning-diagnosis-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .learning-diagnosis-item {
+      padding: 10px 12px;
+      border: 1px solid var(--line-2);
+      border-left: 4px solid #b7d9cc;
+      border-radius: 12px;
+      background: rgba(255,255,255,.76);
+    }
+
+    .learning-diagnosis-item.needs-review {
+      border-left-color: var(--amber);
+      background: rgba(255,247,232,.72);
+    }
+
+    .learning-diagnosis-item h4 {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 0 0 4px;
+      font-size: 13px;
+    }
+
+    .learning-diagnosis-item p {
+      margin: 0;
+      color: #667085;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .learning-result-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .learning-highlight {
@@ -1257,7 +1423,10 @@
     }
 
     .part-glow {
-      filter: drop-shadow(0 0 8px rgba(60,143,119,.75));
+      outline: 2px solid #258264;
+      outline-offset: 3px;
+      box-shadow: 0 0 0 6px rgba(60,143,119,.16), 0 0 14px rgba(60,143,119,.7);
+      z-index: 4;
     }
 
     .compact-tools-title {
@@ -1333,8 +1502,8 @@
 
     .workspace-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
+      grid-template-columns: minmax(0, .95fr) minmax(0, 1.3fr) minmax(0, 1.05fr);
+      gap: 12px;
       align-items: stretch;
     }
 
@@ -1351,7 +1520,7 @@
     .workspace-panel {
       display: flex;
       flex-direction: column;
-      height: 100%;
+      min-height: 0;
       overflow: hidden;
     }
 
@@ -1366,7 +1535,7 @@
 
     .stage-panel .stage-wrap {
       flex: 1;
-      height: clamp(260px, 28vw, 360px);
+      height: 330px;
       min-height: 260px;
     }
 
@@ -1378,6 +1547,8 @@
       padding: 8px 12px;
       border-bottom: 1px solid var(--line-2);
     }
+
+    .stage-panel { container-type: inline-size; }
 
     .stage-panel-heading .workspace-title {
       padding: 0;
@@ -1396,6 +1567,11 @@
       border-radius: 0;
       background: transparent;
       box-shadow: none;
+    }
+
+    @container (max-width: 380px) {
+      .stage-panel-heading { flex-wrap: wrap; }
+      .stage-panel-heading .stage-specimen-control { width: 100%; }
     }
 
     .stage-reference-note {
@@ -1423,6 +1599,7 @@
     .scope-panel .microscope-controls {
       position: static;
       display: grid;
+      min-width: 0;
       width: 100%;
       min-height: 108px;
       transform: none;
@@ -1502,7 +1679,8 @@
 
     .field-panel .workspace-title {
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
+      align-items: baseline;
       justify-content: space-between;
       gap: 10px;
     }
@@ -1511,7 +1689,8 @@
       color: var(--muted);
       font-size: 12px;
       font-weight: 700;
-      text-align: right;
+      text-align: left;
+      line-height: 1.5;
     }
 
     .field-panel .view-toolbar {
@@ -1531,7 +1710,7 @@
     }
 
     .bottom-controls {
-      margin-top: 16px;
+      margin-top: 0;
       padding: 10px 14px 12px;
     }
 
@@ -1616,7 +1795,7 @@
     }
 
     .learning-block {
-      margin-top: 16px;
+      margin-top: 0;
       padding: 0;
     }
 
@@ -1627,6 +1806,13 @@
 
     .learning-block #learningToggleBtn {
       display: none;
+    }
+
+    .learning-block .control-head #exitLearningBtn {
+      width: auto;
+      min-height: 36px;
+      padding: 6px 12px;
+      font-size: 13px;
     }
 
     .learning-block .learning-panel {
@@ -1659,25 +1845,6 @@
       box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
       backdrop-filter: blur(8px);
       pointer-events: none;
-    }
-
-    @media (max-width: 1100px) {
-      .workspace-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .field-panel {
-        grid-column: 1 / -1;
-      }
-
-      .field-panel .view-section {
-        grid-template-columns: minmax(280px, 1fr) minmax(280px, 1fr);
-        grid-template-rows: none;
-      }
-
-      .bottom-control-grid {
-        align-items: flex-start;
-      }
     }
 
     @media (max-width: 1180px) {
@@ -1732,19 +1899,14 @@
       display: block;
     }
 
-    @media (max-width: 1100px) {
+    @media (min-width: 761px) and (max-width: 960px) {
       .workspace-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas: "stage field" "scope scope";
       }
-
-      .field-panel {
-        grid-column: 1 / -1;
-      }
-
-      .field-panel .view-section {
-        grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr);
-        grid-template-rows: none;
-      }
+      .stage-panel { grid-area: stage; }
+      .scope-panel { grid-area: scope; }
+      .field-panel { grid-area: field; }
     }
 
     @media (max-width: 760px) {
@@ -1768,7 +1930,7 @@
 
       .field-panel .view-section {
         grid-template-columns: 1fr;
-        grid-template-rows: minmax(0, 1fr) auto;
+        grid-template-rows: 1fr;
       }
 
       .stage-panel .stage-wrap {
@@ -1789,13 +1951,30 @@
       }
 
       .bottom-controls {
-        padding: 0 12px 12px;
+        padding: 12px;
+      }
+
+      .learning-step-nav {
+        grid-template-columns: repeat(4, minmax(44px, 1fr));
+      }
+
+      .learning-diagnosis-list {
+        grid-template-columns: 1fr;
+      }
+
+      .learning-result-overview {
+        grid-template-columns: 1fr;
+      }
+
+      .learning-result-score {
+        width: 82px;
       }
     }
 
     /* Keep the microscope illustration proportional and reserve a dedicated control column. */
     .scope-panel {
       --scope-scale: .94;
+      container-type: inline-size;
     }
 
     .scope-panel .microscope-body-wrap {
@@ -1805,7 +1984,6 @@
       align-items: center;
       gap: 12px;
       min-height: 330px;
-      height: 100%;
       padding: 12px;
     }
 
@@ -1821,32 +1999,60 @@
 
     .scope-panel .microscope-controls {
       align-self: stretch;
-      min-height: 100%;
+      min-height: 0;
       margin: 0;
     }
 
-    @media (max-width: 1100px) {
-      .scope-panel {
-        --scope-scale: .88;
-      }
+    .scope-panel .microscope-controls #basicControls .compact-row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+    }
 
-      .field-panel .view-section {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr;
+    .scope-panel .microscope-controls .control-unit,
+    .scope-panel .microscope-controls .segmented {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .scope-panel .microscope-controls input[type="range"] {
+      width: 100%;
+      height: 36px;
+    }
+
+    .control-magnification {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    [data-micro-control].is-active-control {
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    [data-micro-control].part-glow {
+      outline-color: #258264;
+    }
+
+    [data-micro-control]:focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 4px;
+    }
+
+    @container (max-width: 420px) {
+      .scope-panel .microscope-body-wrap {
+        grid-template-columns: 110px minmax(0, 1fr);
+        gap: 8px;
+        padding: 10px 8px;
       }
+      .scope-panel .microscope { --scope-scale: .78; }
+      .scope-panel .microscope-controls { padding: 12px 10px; }
     }
 
     @media (max-width: 760px) {
       .scope-panel {
         --scope-scale: .9;
-      }
-
-      .scope-panel .microscope-body-wrap {
-        display: grid;
-        grid-template-columns: minmax(160px, .8fr) minmax(0, 1.2fr);
-        grid-template-rows: minmax(310px, 1fr);
-        min-height: 330px;
-        padding: 10px;
       }
 
       .scope-panel .microscope {
@@ -1862,6 +2068,60 @@
         gap: 10px;
       }
     }
+
+    @media (pointer: coarse) {
+      .stage-wrap .nudge-pad {
+        width: calc(100% - 20px);
+        max-width: 280px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        bottom: 10px;
+      }
+      .stage-wrap .nudge-pad .blank { display: none; }
+      .stage-wrap .nudge-pad button { grid-row: 1; }
+      .stage-wrap .nudge-pad [data-nudge="left"] { grid-column: 1; }
+      .stage-wrap .nudge-pad [data-nudge="up"] { grid-column: 2; }
+      .stage-wrap .nudge-pad #centerBtn { grid-column: 3; }
+      .stage-wrap .nudge-pad [data-nudge="down"] { grid-column: 4; }
+      .stage-wrap .nudge-pad [data-nudge="right"] { grid-column: 5; }
+      .stage-wrap .nudge-pad button,
+      .scope-panel .seg-btn,
+      .bottom-mode-row > button,
+      .bottom-mode-row .preset-grid button,
+      .learning-block .control-head #exitLearningBtn,
+      .learning-step-button,
+      .learning-phase-panel button,
+      .learning-result-actions button,
+      .stage-specimen-control select { min-height: 44px; }
+      .bottom-guide-row .toggle-row { min-height: 44px; }
+      .scope-panel .microscope-controls input[type="range"] { height: 44px; }
+      [data-micro-control]::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: max(100%, 56px);
+        height: max(100%, 56px);
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    @media (min-width: 961px) {
+      .learning-block .learning-panel {
+        grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr);
+        align-items: start;
+        gap: 12px 20px;
+      }
+      .learning-panel .operation-guide { padding: 0; border: 0; background: transparent; }
+    }
+    .language-bar { display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 8px; }
+    .language-bar button { flex: 0 0 auto; width: auto; min-width: 44px; min-height: 36px; padding: 4px 12px; }
+    .language-bar button[aria-pressed="true"] { background: var(--accent-soft, #e7f5ef); color: #176c59; border-color: #93cbbb; font-weight: 800; }
+    .workspace-title-text { flex-shrink: 0; }
+    .field-panel .workspace-title { flex-wrap: wrap; gap: 6px 12px; }
+    .field-summary { min-width: 0; flex: 1 1 180px; }
+    html:not([lang="zh-TW"]) .compact-row { flex-wrap: wrap; }
+    html:not([lang="zh-TW"]) .compact-label { flex-basis: 100%; }
+    html:not([lang="zh-TW"]) .nudge-pad button { padding-inline: 2px; font-size: 12px; }
   </style>
 </head>
 <body>
@@ -1946,10 +2206,10 @@
                     <label for="specimenSelect">標本</label>
                     <select id="specimenSelect" class="compact-select">
                       <option value="e">字母 e</option>
-                      <option value="onion_raw">洋蔥原始</option>
-                      <option value="onion_blue">洋蔥染色</option>
-                      <option value="cheek_raw">口腔原始</option>
-                      <option value="cheek_blue">口腔染色</option>
+                      <option value="onion_raw">洋蔥表皮細胞（未染色）</option>
+                      <option value="onion_blue">洋蔥表皮細胞（染色）</option>
+                      <option value="cheek_raw">口腔上皮細胞（未染色）</option>
+                      <option value="cheek_blue">口腔上皮細胞（染色）</option>
                     </select>
                   </div>
                   <div class="stage-grid-h" style="top:25%"></div>
@@ -1967,13 +2227,13 @@
                   </div>
                   <div class="nudge-pad" aria-label="玻片方向控制">
                     <button class="blank" tabindex="-1" aria-hidden="true"> </button>
-                    <button data-nudge="up">↑</button>
+                    <button data-nudge="up" aria-label="玻片向上移動">↑</button>
                     <button class="blank" tabindex="-1" aria-hidden="true"> </button>
-                    <button data-nudge="left">←</button>
+                    <button data-nudge="left" aria-label="玻片向左移動">←</button>
                     <button class="primary-btn" id="centerBtn">中心</button>
-                    <button data-nudge="right">→</button>
+                    <button data-nudge="right" aria-label="玻片向右移動">→</button>
                     <button class="blank" tabindex="-1" aria-hidden="true"> </button>
-                    <button data-nudge="down">↓</button>
+                    <button data-nudge="down" aria-label="玻片向下移動">↓</button>
                     <button class="blank" tabindex="-1" aria-hidden="true"> </button>
                   </div>
                 </div>
@@ -1981,7 +2241,7 @@
 
               <section class="observe-card">
                 <div class="observe-head">
-                  <h3>顯微鏡視野</h3>
+                  <h3>視野</h3>
                   <span class="observe-note">眼睛看到的結果</span>
                 </div>
                 <div class="view-panel">
@@ -2002,7 +2262,7 @@
                       <div class="light-source" id="lightSource" data-micro-control="light" role="button" tabindex="0" aria-label="調整光源"></div>
                       <div class="base"></div>
                     </div>
-                    <div class="microscope-controls">
+                    <div class="microscope-controls" id="microscopeControls">
                       <p class="structure-adjustment-title">構造調整區</p>
                       <p class="structure-control-hint">點選顯微鏡構造後可進行調整</p>
                       <section class="control-group compact-controls" id="basicControls">
@@ -2033,20 +2293,21 @@
                             <option value="15">15x</option>
                           </select>
                         </div>
+                        <p class="control-magnification" id="controlMagnification"></p>
                       </section>
 
                       <section class="control-group focus-light-controls">
                         <div class="range-block compact-range control-unit" id="coarseControl">
                           <div class="range-row"><span>粗調節輪</span><span class="mini-value" id="coarseValue">0</span></div>
-                          <input type="range" id="coarseFocus" min="-100" max="100" value="0" />
+                          <input type="range" id="coarseFocus" aria-label="粗調節輪" min="-100" max="100" value="0" />
                         </div>
                         <div class="range-block compact-range control-unit" id="fineControl">
                           <div class="range-row"><span>細調節輪</span><span class="mini-value" id="fineValue">0</span></div>
-                          <input type="range" id="fineFocus" min="-30" max="30" value="0" />
+                          <input type="range" id="fineFocus" aria-label="細調節輪" min="-30" max="30" value="0" />
                         </div>
                         <div class="range-block compact-range control-unit" id="lightControlWrap">
                           <div class="range-row"><span>光源</span><span class="mini-value" id="lightValue">50</span></div>
-                          <input type="range" id="lightControl" min="0" max="100" value="50" />
+                          <input type="range" id="lightControl" aria-label="光源" min="0" max="100" value="50" />
                         </div>
                       </section>
                     </div>
@@ -2090,24 +2351,58 @@
               </div>
               <h3 class="learning-title" id="learningTitle">學習任務</h3>
               <div class="learning-instruction" id="learningInstruction"></div>
+              <nav class="learning-step-nav" id="learningStepNav" aria-label="學習關卡"></nav>
+              <details class="learning-score-rules">
+                <summary>計分方式與使用提醒</summary>
+                操作每關 100 分：指定順序錯誤扣 20 分、違反本關操作條件扣 20 分、觸發碰撞保護扣 20 分，各類每關最多扣一次。未完成操作不能提交。預測、速度、滑桿次數、正常探索與重試不扣分。概念題依選對比例給分，誤選扣同等分數，最低 0 分。兩項總分分別取八關平均。重新整理會清除本次成績。
+              </details>
             </div>
 
+            <div class="learning-phase-panel" id="predictionPhasePanel">
+              <p class="learning-phase-label">1. 先預測（不計分）</p>
+              <div class="learning-question" id="predictionQuestion"></div>
+              <div class="option-list" id="predictionOptions"></div>
+              <button id="submitPredictionBtn" class="primary-btn" type="button" disabled>確認預測，開始操作</button>
+            </div>
             <div class="learning-phase-panel" id="operationPhasePanel">
+              <p class="learning-phase-label">2. 操作與觀察</p>
+              <ol class="operation-checklist" id="operationChecklist"></ol>
               <div class="operation-status" id="operationStatus">請先完成指定操作。</div>
-              <div class="operation-guide">所有顯微鏡功能都可以操作；綠色醒目區域是這一關建議優先嘗試的功能。</div>
+              <p class="learning-notice is-hidden" id="operationNotice" role="status"></p>
+              <div class="operation-guide">綠色提示指出下一步要操作的位置。完成後，請比較視野變化再作答。</div>
               <button id="goToAnswerBtn" class="primary-btn go-answer-btn" type="button" disabled>完成指定操作後前往作答</button>
             </div>
 
             <div class="learning-phase-panel is-hidden" id="answerPhasePanel">
+              <p class="learning-phase-label">3. 根據觀察解釋</p>
+              <div class="learning-instruction" id="observationSummary"></div>
               <div class="learning-question" id="learningQuestion"></div>
               <div class="option-list" id="learningOptions"></div>
               <div class="learning-feedback" id="learningFeedback"></div>
               <div class="learning-actions">
-                <button id="submitAnswerBtn" class="primary-btn wide" type="button">提交複選答案</button>
-                <button id="prevStepBtn" type="button">上一步</button>
-                <button id="nextStepBtn" type="button">下一步</button>
+                <button id="submitAnswerBtn" class="primary-btn" type="button">提交答案</button>
+                <button id="nextStepBtn" type="button" disabled>下一步</button>
               </div>
             </div>
+            <section class="learning-result is-hidden" id="learningResult" aria-live="polite">
+              <div class="learning-result-overview">
+                <div class="score-pair">
+                  <div><div class="learning-result-score"><strong id="learningOperationScore">0</strong><span>／100</span></div><p>操作技能</p></div>
+                  <div><div class="learning-result-score"><strong id="learningResultScore">0</strong><span>／100</span></div><p>概念理解</p></div>
+                </div>
+                <div>
+                  <h3 id="learningResultTitle">學習成果</h3>
+                  <p id="learningResultSummary"></p>
+                </div>
+                <div class="score-report" id="scoreReport" tabindex="0"></div>
+              </div>
+              <h3 class="learning-diagnosis-title">學習診斷與觀念修正建議</h3>
+              <div class="learning-diagnosis-list" id="learningDiagnosisList"></div>
+              <div class="learning-result-actions">
+                <button id="reviewLearningBtn" type="button">複習需加強關卡</button>
+                <button id="restartLearningBtn" class="primary-btn" type="button">重新挑戰</button>
+              </div>
+            </section>
             <button id="exitLearningBtn" class="wide" type="button">離開學習模式</button>
           </div>
         </section>
@@ -2126,7 +2421,180 @@
   </div>
 
   <script>
+    let currentLanguage = "zh-TW";
+    const translations = {
+      "複式顯微鏡模擬｜學習模式版": ["Compound Microscope Simulator | Learning Mode", "複式顕微鏡シミュレーター｜学習モード"],
+      "複式顯微鏡模擬": ["Compound Microscope Simulator", "複式顕微鏡シミュレーター"],
+      "語言": ["Language", "言語"],
+      "視野": ["View", "視野"],
+      "載物台": ["Stage", "ステージ"],
+      "複式顯微鏡": ["Compound Microscope", "複式顕微鏡"],
+      "標本": ["Specimen", "標本"],
+      "字母 e": ["Letter e", "文字 e"],
+      "洋蔥表皮細胞（未染色）": ["Onion epidermis (unstained)", "タマネギ表皮細胞（未染色）"],
+      "洋蔥表皮細胞（染色）": ["Onion epidermis (stained)", "タマネギ表皮細胞（染色）"],
+      "口腔上皮細胞（未染色）": ["Cheek epithelial cells (unstained)", "口腔上皮細胞（未染色）"],
+      "口腔上皮細胞（染色）": ["Cheek epithelial cells (stained)", "口腔上皮細胞（染色）"],
+      "洋蔥表皮細胞（亞甲藍染色）": ["Onion epidermis (methylene blue)", "タマネギ表皮細胞（メチレンブルー染色）"],
+      "口腔上皮細胞（亞甲藍染色）": ["Cheek epithelial cells (methylene blue)", "口腔上皮細胞（メチレンブルー染色）"],
+      "中心": ["Center", "中央"],
+      "拖曳玻片並調整顯微鏡，觀察視野中的成像變化。": ["Drag the slide and adjust the microscope to observe changes in the image.", "スライドを動かして顕微鏡を調整し、像の変化を観察しましょう。"],
+      "中央圓形與十字線可作為玻片對位參考。": ["Use the center circle and cross as slide alignment guides.", "中央の円と十字線をスライドの位置合わせの目安にできます。"],
+      "顯微鏡操作工作區": ["Microscope workspace", "顕微鏡操作エリア"],
+      "可拖曳玻片": ["Draggable slide", "ドラッグできるスライド"],
+      "玻片方向控制": ["Slide movement controls", "スライドの移動操作"],
+      "玻片向上移動": ["Move slide up", "スライドを上へ移動"],
+      "玻片向下移動": ["Move slide down", "スライドを下へ移動"],
+      "玻片向左移動": ["Move slide left", "スライドを左へ移動"],
+      "玻片向右移動": ["Move slide right", "スライドを右へ移動"],
+      "顯微鏡示意圖": ["Interactive microscope diagram", "操作できる顕微鏡の模式図"],
+      "調整目鏡倍率": ["Adjust eyepiece magnification", "接眼レンズの倍率を調整"],
+      "調整物鏡倍率": ["Adjust objective magnification", "対物レンズの倍率を調整"],
+      "調整粗細調節輪": ["Adjust coarse and fine focus", "粗動・微動ねじを調整"],
+      "調整光源": ["Adjust illumination", "光源を調整"],
+      "構造調整區": ["Adjustments", "調整エリア"],
+      "點選顯微鏡構造後可進行調整": ["Select a microscope part to adjust it.", "顕微鏡の各部を選ぶと調整できます。"],
+      "物鏡": ["Objective", "対物レンズ"],
+      "目鏡": ["Eyepiece", "接眼レンズ"],
+      "調節輪": ["focus knobs", "調節ねじ"],
+      "粗調節輪": ["Coarse focus", "粗動ねじ"],
+      "細調節輪": ["Fine focus", "微動ねじ"],
+      "光源": ["Light", "光源"],
+      "物鏡倍率": ["Objective magnification", "対物レンズの倍率"],
+      "目鏡倍率": ["Eyepiece magnification", "接眼レンズの倍率"],
+      "4x 掃描": ["4x Scanning", "4x 探索"],
+      "10x 低倍": ["10x Low power", "10x 低倍率"],
+      "40x 高倍": ["40x High power", "40x 高倍率"],
+      "顯示目鏡指針": ["Eyepiece pointer", "接眼指針を表示"],
+      "顯示視野十字線": ["View crosshair", "視野の十字線を表示"],
+      "顯示載物台對位線": ["Stage alignment guides", "ステージの位置合わせ線を表示"],
+      "學習模式": ["Learning mode", "学習モード"],
+      "開啟學習模式": ["Start learning", "学習を開始"],
+      "關閉學習模式": ["Close learning", "学習を閉じる"],
+      "離開學習模式": ["Exit learning", "学習を終了"],
+      "進入": ["Start", "開始"],
+      "學習任務": ["Learning task", "学習課題"],
+      "學習關卡": ["Learning levels", "学習ステップ"],
+      "重新開始模擬": ["Reset simulation", "シミュレーションをリセット"],
+      "重試本關": ["Retry this level", "このステップをやり直す"],
+      "任務模擬：": ["Scenarios:", "場面設定："],
+      "低倍找標本": ["Find at low power", "低倍率で標本を探す"],
+      "高倍觀察": ["High-power view", "高倍率で観察"],
+      "太暗": ["Too dark", "暗すぎる"],
+      "失焦": ["Out of focus", "ピンぼけ"],
+      "操作說明": ["How to use", "操作ガイド"],
+      "拖曳玻片或使用方向按鈕移動標本；點選目鏡、物鏡、調節輪或光源，可展開調整選項，再點一次收合。鍵盤可用 Tab 選取構造、Enter 展開，方向鍵調整滑桿。": ["Drag the slide or use the arrow buttons. Select the eyepiece, objective, focus knobs or light to show adjustments; select it again to close them. Use Tab to focus a part, Enter to open it and arrow keys to adjust sliders.", "スライドをドラッグするか矢印ボタンで標本を動かします。接眼レンズ・対物レンズ・調節ねじ・光源を選ぶと調整欄が開き、もう一度選ぶと閉じます。Tabで各部を選択し、Enterで開き、矢印キーでスライダーを調整できます。"],
+      "學習流程：預測 → 操作與觀察 → 作答 → 診斷。八關可自由切換；提交答案後才能選擇下一步。情境按鈕用於示範，學習中使用後請按「重試本關」再親自完成。": ["Learning: predict → operate and observe → answer → diagnosis. Jump freely between eight levels. Submit an answer to unlock Next. Scenarios are demonstrations, not evidence of your work; select Retry this level afterward to complete the steps yourself.", "学習の流れ：予測 → 操作と観察 → 解答 → 診断。8ステップは自由に切り替えられます。解答を提出すると次へ進めます。場面設定は実演用です。学習中に使った場合は「このステップをやり直す」を押し、自分で操作してください。"],
+      "40x 下若載物台過度靠近物鏡，系統會提醒並停止繼續靠近；反向調整仍可退回。這是教學模擬保護界線，不代表實際儀器的安全距離。": ["At 40x, moving the stage too close to the objective triggers a warning and stops further approach. You can still move it away. This teaching boundary is not a safe-distance specification for real equipment.", "40xでステージが対物レンズに近づきすぎると警告し、それ以上の接近を止めます。逆方向には戻せます。これは学習用の保護境界であり、実機の安全距離を示すものではありません。"],
+      "完成八關後，請將操作技能與概念理解兩項分數自行回報老師。本頁不保存或上傳成績，重新整理後會重置。": ["After all eight levels, report both your operation and concept scores to your teacher. Scores are not saved or uploaded; reloading clears them.", "8ステップ終了後、操作技能と概念理解の2つの点数を先生に報告してください。成績は保存・送信されず、再読み込みで消去されます。"],
+      "計分方式與使用提醒": ["Scoring and reminders", "採点方法と注意事項"],
+      "操作每關 100 分：指定順序錯誤扣 20 分、違反本關操作條件扣 20 分、觸發碰撞保護扣 20 分，各類每關最多扣一次。未完成操作不能提交。預測、速度、滑桿次數、正常探索與重試不扣分。概念題依選對比例給分，誤選扣同等分數，最低 0 分。兩項總分分別取八關平均。重新整理會清除本次成績。": ["Operations start at 100 per level. Wrong order, breaking a fixed condition and triggering collision protection each cost 20 points, at most once per category per level. Complete the operation before submitting. Predictions, speed, slider use, normal exploration and retries do not cost points. Concept scores credit correct choices and subtract the same amount for incorrect choices, with a minimum of 0. Each overall score is the average of eight levels. Reloading clears scores.", "操作は各ステップ100点から開始。順序違反、指定条件違反、衝突保護の作動は各20点減点で、各種類につき1回までです。操作を完了するまで解答は提出できません。予測・速さ・スライダーの操作回数・通常の探索・再試行では減点しません。概念問題は正しい選択の割合で加点し、誤選択は同じ配点で減点します（最低0点）。総合点はそれぞれ8ステップの平均です。再読み込みで成績は消去されます。"],
+      "1. 先預測（不計分）": ["1. Predict (not scored)", "1. 予測する（採点なし）"],
+      "2. 操作與觀察": ["2. Operate and observe", "2. 操作して観察する"],
+      "3. 根據觀察解釋": ["3. Explain your observations", "3. 観察をもとに説明する"],
+      "確認預測，開始操作": ["Confirm prediction and begin", "予測を確定して操作を開始"],
+      "綠色提示指出下一步要操作的位置。完成後，請比較視野變化再作答。": ["Green highlights show the next control to use. Compare the view before answering.", "緑色の表示が次に操作する場所を示します。視野の変化を比べてから解答しましょう。"],
+      "提交答案": ["Submit answer", "解答を提出"],
+      "已提交答案": ["Answer submitted", "提出済み"],
+      "下一步": ["Next", "次へ"],
+      "查看學習結果": ["View results", "学習結果を見る"],
+      "操作技能": ["Operation skills", "操作技能"],
+      "概念理解": ["Concept understanding", "概念理解"],
+      "學習成果": ["Learning results", "学習結果"],
+      "學習診斷與觀念修正建議": ["Learning diagnosis and concept feedback", "学習診断と考え方の見直し"],
+      "重新挑戰": ["Start a new challenge", "もう一度挑戦"],
+      "回到關卡": ["Return to levels", "ステップに戻る"],
+      "複習需加強關卡": ["Review weaker levels", "苦手なステップを復習"],
+      "明亮": ["Bright", "明るい"],
+      "中等": ["Moderate", "中程度"],
+      "偏暗": ["Dim", "やや暗い"],
+      "清楚": ["Clear", "鮮明"],
+      "略模糊": ["Slightly blurred", "ややぼけている"],
+      "模糊": ["Blurred", "ぼけている"],
+      "嚴重失焦": ["Very blurred", "大きくピンぼけ"],
+      "中央": ["Center", "中央"],
+      "左": ["Left", "左"], "右": ["Right", "右"], "上": ["Up", "上"], "下": ["Down", "下"],
+      "左上": ["Upper left", "左上"], "右上": ["Upper right", "右上"], "左下": ["Lower left", "左下"], "右下": ["Lower right", "右下"],
+      "玻片：{position}｜清晰度：{focus} {score}%｜亮度：{light}": ["Slide: {position} | Focus: {focus} {score}% | Light: {light}", "位置：{position}｜鮮明度：{focus} {score}%｜明るさ：{light}"],
+      "物鏡 {objective}x × 目鏡 {ocular}x = {total}倍": ["Objective {objective}x × eyepiece {ocular}x = {total}x", "対物 {objective}x × 接眼 {ocular}x = {total}倍"],
+      "{objective}x × {ocular}x = {total} 倍": ["{objective}x × {ocular}x = {total}x", "{objective}x × {ocular}x = {total} 倍"],
+      "本關請點選發亮的{parts}，展開調整選項。": ["Select the highlighted {parts} to show its adjustments.", "光っている{parts}を選んで調整欄を開いてください。"],
+      "第 {level} / {total} 關｜已完成 {completed} 關": ["Level {level} / {total} | {completed} completed", "ステップ {level} / {total}｜{completed} 完了"],
+      "第 {level} 關：{title}{status}": ["Level {level}: {title}{status}", "ステップ {level}：{title}{status}"],
+      "，已完成，操作 {operation} 分，概念 {concept} 分": [", completed, operation {operation}, concepts {concept}", "、完了、操作 {operation} 点、概念 {concept} 点"],
+      "，未完成": [", incomplete", "、未完了"],
+      "操作技能 {operation} 分｜概念理解 {concept} 分": ["Operation skills: {operation} | Concepts: {concept}", "操作技能 {operation} 点｜概念理解 {concept} 点"],
+      "你選對的項目：": ["Correct choices:", "正しく選んだ項目："],
+      "漏選的正確項目：": ["Missed correct choices:", "選び忘れた正しい項目："],
+      "誤選的項目：": ["Incorrect choices:", "誤って選んだ項目："],
+      "觀念整理：": ["Key concepts:", "考え方の整理："],
+      "無": ["None", "なし"],
+      "任務：": ["Task: ", "課題："],
+      "複選題：": ["Select all correct statements: ", "正しいものをすべて選びましょう："],
+      "整體觀念掌握優良": ["Excellent concept understanding", "概念をよく理解できています"],
+      "能正確連結顯微鏡構造、操作方式與視野變化。": ["You connect microscope parts, operations and changes in the view correctly.", "顕微鏡の各部・操作方法・視野の変化を正しく結び付けられています。"],
+      "整體表現良好": ["Good overall understanding", "全体的によくできています"],
+      "主要概念已建立，少數操作原理需要再確認。": ["You understand the main concepts; review a few operating principles.", "主な概念は理解できています。一部の操作原理を確認しましょう。"],
+      "基礎觀念已建立": ["Foundations established", "基本的な概念が身に付いています"],
+      "建議依下方診斷複習得分較低的關卡，再重新挑戰。": ["Use the diagnosis below to review lower-scoring levels, then try again.", "下の診断を参考に点数の低いステップを復習し、再挑戦しましょう。"],
+      "建議重新練習核心概念": ["Review the core concepts", "重要な概念を復習しましょう"],
+      "先從得分最低的關卡開始複習，配合操作對照下方觀念整理。": ["Start with your lowest-scoring level and compare your observations with the concept feedback.", "最も点数の低いステップから復習し、操作と下の解説を照らし合わせましょう。"],
+      "回報老師：已完成 8／8 關｜操作技能 {operation}／100｜概念理解 {concept}／100": ["Report to teacher: 8/8 completed | Operation skills {operation}/100 | Concepts {concept}/100", "先生への報告：8/8 完了｜操作技能 {operation}/100｜概念理解 {concept}/100"],
+      "已完成全部 {total} 關，其中 {perfect} 關概念題全對。{summary} 兩項分數分別取八關平均。請自行回報老師，重新整理後成績會清除。": ["All {total} levels completed; {perfect} perfect concept scores. {summary} Each score averages eight levels. Report them to your teacher; reloading clears results.", "全{total}ステップを完了し、{perfect}ステップの概念問題が全問正解でした。{summary} 2つの点数はそれぞれ8ステップの平均です。先生に報告してください。再読み込みで成績は消去されます。"],
+      "觀念修正：{explanation}": ["Concept review: {explanation}", "考え方の見直し：{explanation}"],
+      "本關觀念掌握完整。": ["You understand this level's concepts fully.", "このステップの概念を十分に理解できています。"],
+      "漏選的正確觀念：": ["Missed correct concepts: ", "選び忘れた正しい考え方："],
+      "誤選的敘述：": ["Incorrect statements selected: ", "誤って選んだ説明："],
+      "第 {level} 關｜{title}": ["Level {level} | {title}", "ステップ {level}｜{title}"],
+      "操作 {operation}｜概念 {concept}": ["Skills {operation} | Concepts {concept}", "操作 {operation}｜概念 {concept}"],
+      "已依指定條件完成操作。": ["Completed the operation under the required conditions.", "指定された条件で操作を完了しました。"],
+      "（已完成）": [" (done)", "（完了）"],
+      "已完成指定操作，請比較觀察結果再作答。": ["Operation complete. Compare your observations before answering.", "操作が完了しました。観察結果を比べてから解答しましょう。"],
+      "請依序完成上方步驟，再前往作答。": ["Complete the steps above in order before answering.", "上の手順を順番に完了してから解答に進みましょう。"],
+      "請先完成指定操作。": ["Complete the required operation first.", "先に指定された操作を完了してください。"],
+      "觀察完成，前往作答": ["Observation complete; answer", "観察を終えて解答へ"],
+      "完成指定操作後前往作答": ["Complete the operation to answer", "操作を完了すると解答へ進めます"],
+      "操作前 → 完成時：總倍率 {totalBefore} → {totalAfter} 倍；清晰度 {focusBefore}% → {focusAfter}%；亮度 {lightBefore}% → {lightAfter}%。": ["Before → after: magnification {totalBefore}x → {totalAfter}x; clarity {focusBefore}% → {focusAfter}%; brightness {lightBefore}% → {lightAfter}%.", "操作前 → 完了時：総合倍率 {totalBefore} → {totalAfter} 倍、鮮明度 {focusBefore}% → {focusAfter}%、明るさ {lightBefore}% → {lightAfter}%。"],
+      "曾將亮度降至 {brightness}%。": ["Brightness was first reduced to {brightness}%.", "途中で明るさを{brightness}%まで下げました。"],
+      "玻片往右，請對照視野影像的方向。": ["The slide moved right; compare the direction of the image.", "スライドは右へ動きました。像の動く方向と比べましょう。"],
+      "請依實際觀察回答下方複選題。": ["Answer the multiple-select question based on your observations.", "観察をもとに下の複数選択問題に答えましょう。"],
+      "預測：「{prediction}」（{status}，不計分）。觀察後{outcome}。": ["Prediction: “{prediction}” ({status}, not scored). After observing: {outcome}.", "予測：「{prediction}」（{status}、採点なし）。観察後：{outcome}。"],
+      "正確": ["correct", "正解"], "需修正": ["needs revision", "見直しが必要"],
+      "本關作答全對": ["all choices correct", "すべて正しく解答できました"],
+      "仍有漏選或誤選，請對照觀念整理": ["some missed or incorrect choices remain; review the key concepts", "選び忘れや誤選択があります。考え方の整理を確認しましょう"],
+      "尚未完成操作。": ["Operation not complete.", "操作がまだ完了していません。"],
+      "請先依照任務調整指定構造，再提交答案。": ["Adjust the required part as instructed before submitting.", "課題に従って指定の部分を調整してから提出してください。"],
+      "請至少選擇一個答案。": ["Select at least one answer.", "少なくとも1つ選んでください。"],
+      "已停止向上：物鏡可能碰撞玻片。請將粗調往正值退回，並使用細調對焦。（教學模擬界線）": ["Upward motion stopped: the objective could hit the slide. Move coarse focus toward positive values to retreat, then use fine focus. (Teaching simulation boundary)", "上昇を停止：対物レンズがスライドに接触するおそれがあります。粗動を正の値へ戻し、微動でピントを合わせてください。（学習用の保護境界）"],
+      "物鏡接近玻片，請勿繼續向上粗調；可反向退回或使用細調。（教學模擬界線）": ["The objective is close to the slide. Stop raising the stage with coarse focus; retreat or use fine focus. (Teaching simulation boundary)", "対物レンズがスライドに近づいています。粗動でさらに上げず、逆方向に戻すか微動を使ってください。（学習用の保護境界）"],
+      "操作順序需要修正：依畫面步驟先完成前置操作，再進行下一步。": ["Review the order: complete the prerequisite before the next step.", "操作順序を見直しましょう。画面の手順に従い、前の操作を完了してから次へ進んでください。"],
+      "曾改動本關要求固定的設定，或未依指定調整方向操作。請對照任務要求。": ["A required fixed setting or adjustment direction was not followed. Review the task.", "固定すべき設定を変えたか、指定された調整方向に従っていませんでした。課題を確認しましょう。"],
+      "曾觸發高倍碰撞保護：避免讓載物台過度接近物鏡，退回後使用細調。": ["High-power collision protection was triggered. Keep the stage away from the objective; retreat and use fine focus.", "高倍率で衝突保護が作動しました。ステージを対物レンズに近づけすぎず、戻してから微動を使いましょう。"],
+      "請先恢復任務指定的固定設定，再完成操作。也可以按「重試本關」。": ["Restore the fixed settings before proceeding, or select Retry this level.", "固定すべき設定を戻してから操作してください。「このステップをやり直す」も使えます。"],
+      "本關請往負值調整細調節輪，觀察影像變清楚。往正值會更偏離焦點。": ["Move fine focus toward negative values to sharpen the image. Positive values move farther from focus.", "微動ねじを負の値へ調整し、像が鮮明になる様子を観察しましょう。正の値は焦点から遠ざかります。"],
+      "已觀察低亮度；接著把光源提高至 65 以上。": ["Low brightness observed. Now increase the light to at least 65.", "暗い視野を観察しました。次は光源を65以上に上げましょう。"],
+      "尚未先降低光源。請先降至 30 以下，再提高至 65 以上。": ["First reduce the light to 30 or below, then raise it to at least 65.", "先に光源を30以下に下げ、その後65以上に上げてください。"],
+      "尚未依序完成低倍與置中。請回到 4x，把標本移到中心，再切換 40x；標本偏移時可能離開高倍視野。": ["Low power and centering were not completed in order. Return to 4x, center the specimen, then select 40x. An off-center specimen may leave the high-power view.", "低倍率での観察と中央合わせが順番どおりに完了していません。4xに戻し、標本を中央にしてから40xへ切り替えましょう。ずれた標本は高倍率の視野から外れることがあります。"],
+      "已選擇 4x。請移動玻片或按「中心」，確認標本置中。": ["4x selected. Move the slide or press Center to center the specimen.", "4xを選びました。スライドを動かすか「中央」を押し、標本を中央に合わせてください。"],
+      "已在低倍下置中。現在可以切換 40x。": ["Centered at low power. Now switch to 40x.", "低倍率で中央に合わせました。40xに切り替えましょう。"],
+      "繼續移動玻片，直到位置顯示「中心」。": ["Keep moving the slide until its position reads Center.", "位置が「中央」になるまでスライドを動かしましょう。"],
+      "目前為情境示範，不計入操作完成。請按「重試本關」恢復起始狀態，再親自完成步驟。": ["This is a demonstration and does not count as your operation. Select Retry this level to restore the starting state and do the steps yourself.", "現在は実演状態のため操作完了には数えません。「このステップをやり直す」で初期状態に戻し、自分で手順を実行してください。"],
+      "已恢復本關起始設定，請重新操作。": ["Starting settings restored. Try the operation again.", "このステップの初期設定に戻しました。もう一度操作してください。"],
+    };
+    function t(source, values = {}) {
+      const entry = translations[source];
+      const message = currentLanguage === "zh-TW" ? source : entry?.[currentLanguage === "en" ? 0 : 1] ?? source;
+      return message.replace(/\{(\w+)\}/g, (match, key) => values[key] ?? match);
+    }
+
     const appRoot = document.querySelector(".app");
+    const languageBar = document.createElement("nav");
+    languageBar.className = "language-bar";
+    languageBar.setAttribute("aria-label", "語言");
+    languageBar.innerHTML = `<button type="button" data-language="zh-TW" lang="zh-TW" aria-label="中文" aria-pressed="true">中</button>
+      <button type="button" data-language="en" lang="en" aria-label="English" aria-pressed="false">英</button>
+      <button type="button" data-language="ja" lang="ja" aria-label="日本語" aria-pressed="false">日</button>`;
+    appRoot.prepend(languageBar);
     const mainGridEl = document.querySelector(".main-grid");
     const sidebarEl = document.querySelector(".sidebar");
     const learningBlockEl = document.getElementById("learningBlock");
@@ -2147,7 +2615,10 @@
       panel.className = `workspace-panel ${className}`;
       const heading = document.createElement("h2");
       heading.className = "workspace-title";
-      heading.textContent = title;
+      const titleText = document.createElement("span");
+      titleText.className = "workspace-title-text";
+      titleText.textContent = title;
+      heading.append(titleText);
       panel.append(heading);
       return panel;
     };
@@ -2170,7 +2641,12 @@
 
     const scopePanelEl = makeWorkspacePanel("scope-panel", "複式顯微鏡");
     scopePanelEl.append(microscopeBodyWrapEl);
-    const fieldPanelEl = makeWorkspacePanel("field-panel", "顯微鏡視野");
+    const simulationWarning = document.createElement("p");
+    simulationWarning.id = "simulationWarning";
+    simulationWarning.className = "simulation-warning is-hidden";
+    simulationWarning.setAttribute("role", "status");
+    scopePanelEl.append(simulationWarning);
+    const fieldPanelEl = makeWorkspacePanel("field-panel", "視野");
     const fieldSummaryEl = document.createElement("span");
     fieldSummaryEl.className = "field-summary";
     fieldSummaryEl.id = "fieldSummary";
@@ -2194,7 +2670,8 @@
     studentControlsEl.querySelectorAll("[data-preset]").forEach((button) => {
       button.textContent = presetLabels[button.dataset.preset] || button.textContent;
     });
-    resetButtonEl.classList.add("is-hidden");
+    resetButtonEl.textContent = "重新開始模擬";
+    resetButtonEl.classList.remove("is-hidden");
     document.getElementById("centerFocusBtn")?.classList.add("is-hidden");
 
     const controlGroups = studentControlsEl.querySelectorAll(".control-group");
@@ -2208,6 +2685,7 @@
       learningButtonEl.textContent = "學習模式";
       bottomModeRowEl.append(learningButtonEl);
     }
+    bottomModeRowEl.append(resetButtonEl);
     const modeLabelEl = document.createElement("span");
     modeLabelEl.className = "bottom-inline-label";
     modeLabelEl.textContent = "任務模擬：";
@@ -2215,13 +2693,24 @@
     presetGroupEl?.querySelector(".group-label")?.remove();
     if (presetGridEl) bottomModeRowEl.append(presetGridEl);
 
-    toggleGroupEl?.querySelectorAll(".toggle-row").forEach((label) => bottomModeRowEl.append(label));
+    const bottomGuideRowEl = document.createElement("div");
+    bottomGuideRowEl.className = "bottom-guide-row";
+    toggleGroupEl?.querySelectorAll(".toggle-row").forEach((label) => bottomGuideRowEl.append(label));
 
-    bottomGridEl.append(bottomModeRowEl);
+    bottomGridEl.append(bottomModeRowEl, bottomGuideRowEl);
     bottomControlsEl.append(bottomGridEl);
+    const helpPanel = document.createElement("details");
+    helpPanel.className = "simulation-help";
+    helpPanel.innerHTML = `<summary>操作說明</summary>
+      <p>拖曳玻片或使用方向按鈕移動標本；點選目鏡、物鏡、調節輪或光源，可展開調整選項，再點一次收合。鍵盤可用 Tab 選取構造、Enter 展開，方向鍵調整滑桿。</p>
+      <p>學習流程：預測 → 操作與觀察 → 作答 → 診斷。八關可自由切換；提交答案後才能選擇下一步。情境按鈕用於示範，學習中使用後請按「重試本關」再親自完成。</p>
+      <p>40x 下若載物台過度靠近物鏡，系統會提醒並停止繼續靠近；反向調整仍可退回。這是教學模擬保護界線，不代表實際儀器的安全距離。</p>
+      <p>完成八關後，請將操作技能與概念理解兩項分數自行回報老師。本頁不保存或上傳成績，重新整理後會重置。</p>`;
+    bottomControlsEl.append(helpPanel);
 
     if (mainGridEl) mainGridEl.replaceWith(workspaceGridEl);
     appRoot?.append(bottomControlsEl, learningBlockEl);
+    learningBlockEl.querySelector(".control-head").append(document.getElementById("exitLearningBtn"));
     sidebarEl?.remove();
     const closeTopPanels = () => {
       document.querySelector(".top-info")?.classList.remove("is-open");
@@ -2277,6 +2766,8 @@
 
     const microscopeBodyWrap = document.querySelector(".microscope-body-wrap");
     const microscopeControls = document.querySelector(".microscope-controls");
+    const structureControlHint = document.querySelector(".structure-control-hint");
+    const controlMagnification = document.getElementById("controlMagnification");
     const basicControls = document.getElementById("basicControls");
     const focusLightControls = document.querySelector(".focus-light-controls");
     const objectiveControl = document.getElementById("objectiveControl");
@@ -2300,6 +2791,7 @@
     const learningProgressBar = document.getElementById("learningProgressBar");
     const learningTitle = document.getElementById("learningTitle");
     const learningInstruction = document.getElementById("learningInstruction");
+    const learningStepNav = document.getElementById("learningStepNav");
     const operationStatus = document.getElementById("operationStatus");
     const learningQuestion = document.getElementById("learningQuestion");
     const learningOptions = document.getElementById("learningOptions");
@@ -2308,10 +2800,26 @@
     const answerPhasePanel = document.getElementById("answerPhasePanel");
     const goToAnswerBtn = document.getElementById("goToAnswerBtn");
     const studentControls = document.getElementById("studentControls");
-    const prevStepBtn = document.getElementById("prevStepBtn");
     const nextStepBtn = document.getElementById("nextStepBtn");
     const submitAnswerBtn = document.getElementById("submitAnswerBtn");
     const exitLearningBtn = document.getElementById("exitLearningBtn");
+    const learningResult = document.getElementById("learningResult");
+    const learningResultScore = document.getElementById("learningResultScore");
+    const learningResultTitle = document.getElementById("learningResultTitle");
+    const learningResultSummary = document.getElementById("learningResultSummary");
+    const learningDiagnosisList = document.getElementById("learningDiagnosisList");
+    const reviewLearningBtn = document.getElementById("reviewLearningBtn");
+    const restartLearningBtn = document.getElementById("restartLearningBtn");
+    const learningSummary = document.querySelector(".learning-summary");
+    const predictionPhasePanel = document.getElementById("predictionPhasePanel");
+    const predictionQuestion = document.getElementById("predictionQuestion");
+    const predictionOptions = document.getElementById("predictionOptions");
+    const submitPredictionBtn = document.getElementById("submitPredictionBtn");
+    const operationChecklist = document.getElementById("operationChecklist");
+    const operationNotice = document.getElementById("operationNotice");
+    const observationSummary = document.getElementById("observationSummary");
+    const learningOperationScore = document.getElementById("learningOperationScore");
+    const scoreReport = document.getElementById("scoreReport");
 
     let slideX = 0;
     let slideY = 0;
@@ -2328,13 +2836,177 @@
     let learningAnswered = false;
     let learningInternalUpdate = false;
     let learningPhase = "operation";
-    let currentStepHistory = new Set();
+    let learningResults = [];
+    let learningAttempts = [];
+    let lastSimulationState = null;
+    let collisionBlocked = false;
+
+    const learningTranslations = {
+      en: {
+        slide_reverse: {
+          title: "Slide movement and image inversion",
+          instruction: "Move the slide to the right (press the right arrow twice) and observe which way the image moves.",
+          prediction: { question: "When the slide moves right, which way does the image move?", options: ["Right", "Left", "It stays still"] },
+          milestones: ["Move the slide right by at least two arrow-button steps"],
+          question: "Which statements about moving the slide are correct?",
+          options: ["When the slide moves right, the image moves left.", "A compound microscope produces an image inverted both vertically and horizontally.", "Moving the slide directly changes the total magnification.", "To move the image upward, try moving the slide downward.", "The image always moves in the same direction as the slide."],
+          explanation: "The image in a compound microscope is inverted vertically and horizontally, so it moves in the opposite direction to the slide."
+        },
+        coarse_focus: {
+          title: "Coarse focus",
+          instruction: "Keep the objective at 10x, eyepiece at 10x and fine focus at 0. Move coarse focus from 65 toward 0 until clarity reaches at least 90%. Watch the stage and image.",
+          prediction: { question: "At low power, what happens when coarse focus moves toward the focal position?", options: ["The image becomes clearer", "Eyepiece magnification increases", "The slide becomes larger"] },
+          milestones: ["Use coarse focus to improve clarity to at least 90%"],
+          question: "Which statements about coarse focus are correct?",
+          options: ["It moves the stage up or down by a relatively large amount.", "It can make the image clearer or blurrier.", "It is mainly used to approach focus quickly.", "It directly changes eyepiece magnification.", "Large coarse-focus adjustments are unsuitable at high power."],
+          explanation: "Coarse focus moves the stage by a relatively large amount to approach focus quickly. Avoid large adjustments at high power to prevent the objective from hitting the slide."
+        },
+        fine_focus: {
+          title: "Fine focus",
+          instruction: "Keep the objective at 40x, eyepiece at 10x and coarse focus at 22. Move fine focus from 0 to -6 or below, then continue adjusting until clarity reaches at least 94%.",
+          prediction: { question: "Which adjustment is best for a slightly blurred high-power image?", options: ["Increase eyepiece magnification", "Make a large coarse-focus adjustment", "Make a small fine-focus adjustment"] },
+          milestones: ["Use only fine focus toward negative values to reach at least 94% clarity"],
+          question: "Which statements about fine focus are correct?",
+          options: ["It moves the stage by small amounts.", "It finely adjusts image clarity.", "It is usually more suitable than coarse focus at high power.", "It directly changes objective magnification.", "It can make the image clearer or blurrier."],
+          explanation: "Fine focus also adjusts the focal position, but with smaller movements. It is suitable for refining focus at high power."
+        },
+        objective_lens: {
+          title: "Objective magnification",
+          instruction: "Keep the eyepiece at 10x. Switch the objective from 4x to 40x and compare image size and field of view.",
+          prediction: { question: "What happens to the field of view when the objective changes from 4x to 40x?", options: ["It becomes larger", "It becomes smaller", "It stays the same"] },
+          milestones: ["Switch from a low-power objective to 40x"],
+          question: "Which statements are correct when objective magnification increases?",
+          options: ["The image becomes larger.", "The field of view becomes smaller.", "The view may become darker.", "The range of acceptable focus narrows, so blur occurs more easily.", "Higher-power objectives are usually longer.", "The image becomes upright."],
+          explanation: "Increasing objective magnification enlarges the image, reduces the field of view and brightness, and makes focus more sensitive. Higher-power objectives are usually longer."
+        },
+        ocular_lens: {
+          title: "Eyepiece magnification",
+          instruction: "Keep the objective at 10x. Change the eyepiece from 5x to 10x or 15x and observe the total magnification.",
+          prediction: { question: "What is the total magnification with a 10x objective and 15x eyepiece?", options: ["25x", "150x", "15x"] },
+          milestones: ["Change the eyepiece to increase total magnification"],
+          question: "Which statements about eyepiece magnification are correct?",
+          options: ["Total magnification = eyepiece magnification × objective magnification.", "Increasing eyepiece magnification increases total magnification.", "Changing only eyepiece magnification does not move the slide.", "A 10x objective with a 15x eyepiece gives 150x total magnification.", "Increasing eyepiece magnification always makes the image clearer.", "Both the eyepiece and objective affect total magnification."],
+          explanation: "Total magnification is the eyepiece magnification multiplied by the objective magnification, for example 15 × 10 = 150x. A stronger eyepiece increases magnification but does not guarantee a clearer image."
+        },
+        light_source: {
+          title: "Light intensity",
+          instruction: "Keep the objective at 40x and eyepiece at 10x. First lower the light from 50 to 30 or below, then raise it to 65 or above. Compare the brightness.",
+          prediction: { question: "What changes when only light intensity is reduced?", options: ["Magnification decreases", "The specimen shrinks", "The view becomes darker"] },
+          milestones: ["First lower the light to 30 or below", "Then raise the light to at least 65"],
+          question: "Which statements about light intensity are correct?",
+          options: ["The light controls how bright or dark the view is.", "Insufficient light makes the view dark.", "High-power observation usually requires more light.", "Adjusting the light directly changes total magnification.", "Stronger light always makes the image clearer."],
+          explanation: "Light mainly affects brightness. High-power views are often darker and need more illumination. Light does not set total magnification, and it is not the only factor affecting clarity."
+        },
+        low_to_high: {
+          title: "From low to high power",
+          instruction: "First select 4x, then move the slide or press Center to center the specimen. Finally switch to 40x. Perform these steps yourself in this order.",
+          prediction: { question: "What may happen if you switch directly to high power with an off-center specimen?", options: ["The specimen may leave the view", "The specimen centers itself", "The field of view becomes larger"] },
+          milestones: ["First select 4x to find the specimen", "Center the slide at 4x", "Keep it centered and switch to 40x"],
+          question: "Why should you usually start at low power? Select all correct statements.",
+          options: ["The larger low-power field makes the specimen easier to find.", "Centering the specimen before switching to high power makes observation easier.", "An off-center specimen may disappear from the smaller high-power field.", "After switching to high power, focus and light often need fine adjustment.", "Low power always produces a clearer image than high power."],
+          explanation: "Start with low power, then switch to high power. The larger low-power field helps you locate the specimen. At high power the field becomes smaller, and focus and light often need adjustment."
+        },
+        stain_effect: {
+          title: "Stained specimens",
+          instruction: "Keep the objective at 40x and eyepiece at 10x. Switch onion epidermal cells from unstained to stained and compare the contrast of the nuclei and outlines.",
+          prediction: { question: "What does staining mainly help us see?", options: ["Cells become physically larger", "Greater contrast between structures and background", "Higher microscope magnification"] },
+          milestones: ["Compare unstained and stained specimens at the same magnification"],
+          question: "Which statements about staining are correct?",
+          options: ["Staining makes some cell structures more visible.", "Methylene blue helps reveal nuclei.", "Staining directly increases microscope magnification.", "Staining increases contrast between structures and background.", "Stained cells become physically larger."],
+          explanation: "Methylene blue increases contrast, making structures such as nuclei easier to see. Staining does not change magnification or make cells physically larger."
+        }
+      },
+      ja: {
+        slide_reverse: {
+          title: "スライドの移動と倒立像",
+          instruction: "スライドを右へ動かし（右矢印を2回押します）、視野の像がどちらへ動くか観察しましょう。",
+          prediction: { question: "スライドを右へ動かすと、視野の像はどちらへ動きますか？", options: ["右へ", "左へ", "動かない"] },
+          milestones: ["右矢印2回分以上、スライドを右へ動かす"],
+          question: "スライドの移動について、正しい説明はどれですか？",
+          options: ["スライドを右へ動かすと、像は左へ動く。", "複式顕微鏡では上下左右が逆の倒立像が見えるためである。", "スライドを動かすと総合倍率が直接変わる。", "像を上へ動かしたいときは、スライドを下へ動かすとよい。", "像は必ずスライドと同じ方向へ動く。"],
+          explanation: "複式顕微鏡の像は上下左右が逆なので、スライドを動かすと視野の像は反対方向へ動きます。"
+        },
+        coarse_focus: {
+          title: "粗動ねじ",
+          instruction: "対物10x・接眼10x・微動0を保ち、粗動を65から0へ近づけて鮮明度を90%以上にしましょう。ステージと像の変化を観察してください。",
+          prediction: { question: "低倍率で粗動ねじを焦点に近づく方向へ回すと、どうなりますか？", options: ["像が次第に鮮明になる", "接眼レンズの倍率が上がる", "スライドが大きくなる"] },
+          milestones: ["粗動ねじでピンぼけを改善し、鮮明度を90%以上にする"],
+          question: "粗動ねじについて、正しい説明はどれですか？",
+          options: ["ステージが比較的大きく上下する。", "像が鮮明になることも、ぼけることもある。", "主に焦点へ素早く近づけるために使う。", "接眼レンズの倍率を直接変える。", "高倍率で粗動ねじを大きく回すのは適切ではない。"],
+          explanation: "粗動ねじはステージを比較的大きく上下させ、素早く焦点に近づけるために使います。高倍率では対物レンズがスライドに接触しないよう、大きく回すことを避けます。"
+        },
+        fine_focus: {
+          title: "微動ねじ",
+          instruction: "対物40x・接眼10x・粗動22を保ちます。微動を0から-6以下へ動かし、さらに微調整して鮮明度を94%以上にしましょう。",
+          prediction: { question: "高倍率の像が少しぼけているとき、最も適切な微調整はどれですか？", options: ["接眼レンズの倍率を上げる", "粗動ねじを大きく回す", "微動ねじを少し回す"] },
+          milestones: ["微動だけを負の値へ調整し、鮮明度を94%以上にする"],
+          question: "微動ねじについて、正しい説明はどれですか？",
+          options: ["ステージを少しずつ動かす。", "像の鮮明さを微調整できる。", "高倍率では通常、粗動ねじより適している。", "対物レンズの倍率を直接変える。", "調整すると像が鮮明になることも、ぼけることもある。"],
+          explanation: "微動ねじも焦点を調整しますが、動く幅が小さいため、高倍率で像の鮮明さを微調整するのに適しています。"
+        },
+        objective_lens: {
+          title: "対物レンズの倍率",
+          instruction: "接眼10xを保ち、対物レンズを4xから40xへ切り替え、像の大きさと視野の広さを比べましょう。",
+          prediction: { question: "対物レンズを4xから40xへ変えると、視野の広さはどうなりますか？", options: ["広くなる", "狭くなる", "変わらない"] },
+          milestones: ["低倍率の対物レンズから40xへ切り替える"],
+          question: "対物レンズの倍率を上げたとき、正しい説明はどれですか？",
+          options: ["像が大きくなる。", "視野が狭くなる。", "視野が暗くなることがある。", "ピントが合う範囲が狭くなり、ぼけやすくなる。", "高倍率の対物レンズは通常長い。", "像が正立像になる。"],
+          explanation: "対物レンズの倍率を上げると、像は大きく、視野は狭く暗くなり、ピントがずれやすくなります。高倍率の対物レンズは通常長くなっています。"
+        },
+        ocular_lens: {
+          title: "接眼レンズの倍率",
+          instruction: "対物10xを保ち、接眼レンズを5xから10xまたは15xへ変え、総合倍率の変化を観察しましょう。",
+          prediction: { question: "対物10xと接眼15xを組み合わせた総合倍率は何倍ですか？", options: ["25倍", "150倍", "15倍"] },
+          milestones: ["接眼レンズを変えて総合倍率を上げる"],
+          question: "接眼レンズの倍率について、正しい説明はどれですか？",
+          options: ["総合倍率＝接眼レンズの倍率×対物レンズの倍率である。", "接眼レンズの倍率を上げると、総合倍率が上がる。", "接眼レンズの倍率だけを変えてもスライドの位置は動かない。", "対物10xと接眼15xでは総合倍率は150倍である。", "接眼レンズの倍率を上げると、像は必ず鮮明になる。", "接眼・対物レンズの両方が総合倍率に関係する。"],
+          explanation: "総合倍率は接眼レンズの倍率と対物レンズの倍率の積です。例えば15×10＝150倍です。接眼レンズの倍率を上げても、像が必ず鮮明になるとは限りません。"
+        },
+        light_source: {
+          title: "光源の強さ",
+          instruction: "対物40x・接眼10xを保ち、光源を50から30以下に下げてから65以上に上げ、明るさを比べましょう。",
+          prediction: { question: "光源の強さだけを下げると、視野はどうなりますか？", options: ["倍率が下がる", "標本が小さくなる", "視野が暗くなる"] },
+          milestones: ["先に光源を30以下に下げる", "その後、光源を65以上に上げる"],
+          question: "光源の強さについて、正しい説明はどれですか？",
+          options: ["光源は視野の明るさに影響する。", "光源が弱すぎると視野が暗くなる。", "高倍率での観察には通常より多くの光が必要である。", "光源を調整すると総合倍率が直接変わる。", "光源が強いほど像は必ず鮮明になる。"],
+          explanation: "光源は主に視野の明るさに影響します。高倍率では暗くなりやすく、光を増やす必要があります。ただし光源は総合倍率を変えず、鮮明さを決める唯一の要因でもありません。"
+        },
+        low_to_high: {
+          title: "低倍率から高倍率への観察手順",
+          instruction: "まず4xを選び、スライドを動かすか「中央」を押して標本を中央に合わせ、最後に40xへ切り替えます。この順番で自分で操作しましょう。",
+          prediction: { question: "標本が中央からずれたまま高倍率へ切り替えると、どうなることがありますか？", options: ["標本が視野から外れる", "標本が自動的に中央に来る", "視野が広くなる"] },
+          milestones: ["まず4xを選んで標本を探す", "4xでスライドを中央に合わせる", "中央を保ったまま40xへ切り替える"],
+          question: "通常、低倍率から観察を始めるのはなぜですか？正しい説明を選びましょう。",
+          options: ["低倍率では視野が広く、標本を見つけやすい。", "先に標本を中央に合わせると、高倍率にしても観察しやすい。", "高倍率は視野が狭いため、標本が中央にないと見えなくなることがある。", "高倍率に切り替えた後は、通常、ピントと光源の微調整が必要である。", "低倍率の像は高倍率より必ず鮮明である。"],
+          explanation: "顕微鏡は通常、低倍率から高倍率の順に観察します。低倍率は視野が広く標本を探しやすい一方、高倍率では視野が狭くなるため、ピントと光源の微調整が必要になることがあります。"
+        },
+        stain_effect: {
+          title: "染色した標本",
+          instruction: "対物40x・接眼10xを保ち、タマネギ表皮細胞を未染色から染色に切り替え、核と輪郭のコントラストを比べましょう。",
+          prediction: { question: "染色によって主に何が見やすくなりますか？", options: ["細胞自体が大きくなる", "構造と背景のコントラストが増す", "顕微鏡の倍率が上がる"] },
+          milestones: ["同じ倍率で未染色と染色した標本を比べる"],
+          question: "染色の効果について、正しい説明はどれですか？",
+          options: ["細胞の一部の構造を見やすくする。", "メチレンブルーは核の観察に役立つ。", "顕微鏡の倍率を直接上げる。", "構造と背景のコントラストを高める。", "染色すると細胞自体が大きくなる。"],
+          explanation: "メチレンブルー染色はコントラストを高め、核などの構造を見やすくします。染色は倍率を変えず、細胞自体を大きくするものでもありません。"
+        }
+      }
+    };
+
+    function getLearningStep(index) {
+      const step = learningSteps[index];
+      const copy = learningTranslations[currentLanguage]?.[step.id];
+      if (!copy) return step;
+      return { ...step, ...copy, prediction: { ...step.prediction, ...copy.prediction },
+        milestones: step.milestones.map((milestone, i) => ({ ...milestone, label: copy.milestones[i] })) };
+    }
 
     const learningSteps = [
       {
         id: "slide_reverse",
         title: "移動玻片與倒像",
-        instruction: "請把玻片往右拖曳一段距離，或用右箭頭按鈕微調玻片。觀察載物台上的玻片方向，以及視野中的影像方向。",
+        instruction: "請把玻片往右移動一段距離（可連按右箭頭兩次），觀察影像往哪個方向移動。",
+        prediction: { question: "玻片往右移，視野中的影像會往哪裡？", options: ["往右", "往左", "不移動"], answer: 1 },
+        milestones: [{ label: "玻片向右移動至少兩次微調的距離", target: ["#stageWrap"] }],
         target: ["#stageWrap", "#microscopeView"],
         prepare() {
           specimenSelect.value = "e";
@@ -2346,7 +3018,6 @@
           updateSpecimen();
           setSlidePosition(0, 0);
         },
-        isOperated() { return slideX > 24 || currentStepHistory.has("slideRight"); },
         question: "移動玻片後，哪些敘述正確？",
         options: [
           "玻片往右移時，視野中的影像會往左移。",
@@ -2360,19 +3031,21 @@
       },
       {
         id: "coarse_focus",
-        title: "粗動調節輪",
-        instruction: "請調整粗動調節，觀察顯微鏡示意圖中的載物台，以及視野中影像清晰度的變化。",
+        title: "粗調節輪",
+        instruction: "保持物鏡 10x、目鏡 10x 與細調 0，將粗調從 65 往 0 調整，讓清晰度達 90% 以上。觀察載物台及影像變化。",
+        prediction: { question: "在低倍下，往焦點方向調整粗調節輪會如何？", options: ["影像逐漸清楚", "目鏡倍率增加", "玻片變大"], answer: 0 },
+        milestones: [{ label: "使用粗調改善失焦，清晰度達 90%", target: ["#coarseControl"] }],
+        fixed: ["objective", "ocular", "fine"],
         target: ["#coarseControl", "#stageMini", ".focus-knob-big"],
         prepare() {
           objectiveSelect.value = "10";
           ocularSelect.value = "10";
-          coarseFocus.value = "0";
+          coarseFocus.value = "65";
           fineFocus.value = "0";
           lightControl.value = "55";
           setSlidePosition(0, 0);
           updateView();
         },
-        isOperated() { return Math.abs(Number(coarseFocus.value)) >= 20 || currentStepHistory.has("coarse"); },
         question: "關於粗動調節輪，哪些敘述正確？",
         options: [
           "載物台會有較明顯的上升或下降。",
@@ -2386,20 +3059,21 @@
       },
       {
         id: "fine_focus",
-        title: "細動調節輪",
-        instruction: "請調整細動調節，觀察影像清晰度是否變化。注意：雖然幅度很小，但載物台仍會有細微移動。",
+        title: "細調節輪",
+        instruction: "保持物鏡 40x、目鏡 10x、粗調 22。將細調從 0 往負值調至 -6 以下，並繼續微調，讓清晰度達 94% 以上。",
+        prediction: { question: "高倍影像略微失焦時，哪一項操作最適合微調？", options: ["增加目鏡倍率", "大幅轉動粗調節輪", "小幅轉動細調節輪"], answer: 2 },
+        milestones: [{ label: "只用細調往負值調整，清晰度達 94%", target: ["#fineControl"] }],
+        fixed: ["objective", "ocular", "coarse"],
         target: ["#fineControl", "#stageMini", ".focus-knob-big", ".focus-knob-small"],
         prepare() {
           objectiveSelect.value = "40";
           ocularSelect.value = "10";
-          coarseFocus.value = "0";
+          coarseFocus.value = "22";
           fineFocus.value = "0";
           lightControl.value = "90";
           setSlidePosition(0, 0);
           updateView();
-          openMicroscopeControl("focus");
         },
-        isOperated() { return Math.abs(Number(fineFocus.value)) >= 6 || currentStepHistory.has("fine"); },
         question: "關於細動調節輪，哪些敘述正確？",
         options: [
           "細動調節輪會讓載物台做小幅度移動。",
@@ -2414,7 +3088,10 @@
       {
         id: "objective_lens",
         title: "物鏡倍率",
-        instruction: "請把物鏡從 4x 或 10x 切換到 40x，觀察視野大小、亮度、清晰度，以及物鏡長短。",
+        instruction: "保持目鏡 10x，將物鏡由 4x 切換到 40x，比較影像大小與視野範圍。",
+        prediction: { question: "物鏡由 4x 換成 40x，視野範圍會如何？", options: ["變大", "變小", "不變"], answer: 1 },
+        milestones: [{ label: "由低倍物鏡切換至 40x", target: ["#objectiveControl"] }],
+        fixed: ["ocular"],
         target: ["#objectiveControl", "#objectiveCenter", "#microscopeView"],
         prepare() {
           objectiveSelect.value = "4";
@@ -2425,7 +3102,6 @@
           setSlidePosition(0, 0);
           updateView();
         },
-        isOperated() { return Number(objectiveSelect.value) === 40 || currentStepHistory.has("objective:40"); },
         question: "物鏡倍率提高後，哪些敘述正確？",
         options: [
           "影像變大。",
@@ -2441,7 +3117,10 @@
       {
         id: "ocular_lens",
         title: "目鏡倍率",
-        instruction: "請改變目鏡倍率，觀察總倍率數字與顯微鏡上方目鏡長短的變化。",
+        instruction: "保持物鏡 10x，將目鏡由 5x 改為 10x 或 15x，觀察總倍率的變化。",
+        prediction: { question: "物鏡 10x 搭配目鏡 15x，總倍率是多少？", options: ["25 倍", "150 倍", "15 倍"], answer: 1 },
+        milestones: [{ label: "更換目鏡，提高總倍率", target: ["#ocularControl"] }],
+        fixed: ["objective"],
         target: ["#ocularControl", "#ocularTube"],
         prepare() {
           objectiveSelect.value = "10";
@@ -2452,34 +3131,35 @@
           setSlidePosition(0, 0);
           updateView();
         },
-        isOperated() { return Number(ocularSelect.value) >= 10 || currentStepHistory.has("ocular:10") || currentStepHistory.has("ocular:15"); },
         question: "關於目鏡倍率，哪些敘述正確？",
         options: [
           "總倍率 = 目鏡倍率 × 物鏡倍率。",
           "目鏡倍率提高時，總倍率會增加。",
           "只改變目鏡倍率時，玻片位置不會因此移動。",
-          "高倍率目鏡通常比較短。",
+          "物鏡 10x 配目鏡 15x，總倍率為 150 倍。",
           "目鏡倍率提高時，影像一定會變得更清楚。",
           "目鏡倍率和物鏡倍率都會影響總倍率。"
         ],
         answers: [0, 1, 2, 3, 5],
-        explanation: "目鏡與物鏡共同決定總倍率。提高目鏡倍率會增加總倍率，但不保證影像更清楚；外觀上，高倍率目鏡通常較短。"
+        explanation: "總倍率是目鏡倍率乘以物鏡倍率，例如 15 × 10 = 150 倍。提高目鏡倍率會增加總倍率，但不保證影像更清楚。"
       },
       {
         id: "light_source",
         title: "光源強度",
-        instruction: "請先降低光源，再提高光源。觀察視野亮度是否改變。",
+        instruction: "保持物鏡 40x、目鏡 10x，先將光源從 50 降至 30 以下，再提高至 65 以上，比較兩次亮度。",
+        prediction: { question: "只降低光源強度，視野會發生什麼變化？", options: ["倍率降低", "標本縮小", "視野變暗"], answer: 2 },
+        milestones: [{ label: "光源先降至 30 以下", target: ["#lightControlWrap"] }, { label: "再提高至 65 以上", target: ["#lightControlWrap"] }],
+        fixed: ["objective", "ocular"],
         target: ["#lightControlWrap", "#lightSource", "#microscopeView"],
         prepare() {
           objectiveSelect.value = "40";
           ocularSelect.value = "10";
           coarseFocus.value = "0";
           fineFocus.value = "0";
-          lightControl.value = "25";
+          lightControl.value = "50";
           setSlidePosition(0, 0);
           updateView();
         },
-        isOperated() { return Number(lightControl.value) >= 65 || currentStepHistory.has("light"); },
         question: "關於光源強度，哪些敘述正確？",
         options: [
           "光源會影響視野亮暗。",
@@ -2494,21 +3174,19 @@
       {
         id: "low_to_high",
         title: "低倍到高倍的觀察順序",
-        instruction: "請先按 4x 找到標本並把它移到中心，再切換到 40x。也可以使用情境按鈕中的「低倍找標本」與「高倍觀察」。",
+        instruction: "請先切換至 4x，再移動玻片或按「中心」完成置中，最後切換至 40x。需按此順序親自操作。",
+        prediction: { question: "標本偏離中心時，直接換高倍可能怎樣？", options: ["標本可能離開視野", "標本自動置中", "視野變大"], answer: 0 },
+        milestones: [{ label: "先選擇 4x 找標本", target: ["#objectiveControl"] }, { label: "在 4x 下把玻片移到中心", target: ["#stageWrap", "#centerBtn"] }, { label: "保持置中，切換到 40x", target: ["#objectiveControl"] }],
+        fixed: ["ocular"],
         target: ["#objectiveControl", "#centerBtn", "#microscopeView"],
         prepare() {
-          objectiveSelect.value = "4";
+          objectiveSelect.value = "10";
           ocularSelect.value = "10";
           coarseFocus.value = "0";
           fineFocus.value = "0";
           lightControl.value = "55";
-          setSlidePosition(30, 20);
+          setSlidePosition(65, 40);
           updateView();
-        },
-        isOperated() {
-          const usedLow = currentStepHistory.has("objective:4") || currentStepHistory.has("preset:lowSearch");
-          const usedHigh = currentStepHistory.has("objective:40") || currentStepHistory.has("preset:highObserve") || Number(objectiveSelect.value) === 40;
-          return usedLow && usedHigh;
         },
         question: "為什麼通常要先用低倍鏡觀察？哪些敘述正確？",
         options: [
@@ -2524,7 +3202,10 @@
       {
         id: "stain_effect",
         title: "染色標本",
-        instruction: "請把標本從洋蔥原始切換成洋蔥染色，觀察細胞核與細胞輪廓是否比較明顯。",
+        instruction: "保持物鏡 40x、目鏡 10x，將洋蔥表皮細胞由未染色切換成染色，比較細胞核與輪廓的對比。",
+        prediction: { question: "染色主要幫助我們觀察到什麼？", options: ["細胞實際變大", "構造與背景的對比增加", "顯微鏡倍率提高"], answer: 1 },
+        milestones: [{ label: "以相同倍率比較未染色與染色標本", target: ["#specimenControl"] }],
+        fixed: ["objective", "ocular"],
         target: ["#specimenControl", "#microscopeView"],
         prepare() {
           specimenSelect.value = "onion_raw";
@@ -2536,7 +3217,6 @@
           setSlidePosition(0, 0);
           updateSpecimen();
         },
-        isOperated() { return specimenSelect.value === "onion_blue" || currentStepHistory.has("specimen:onion_blue"); },
         question: "關於染色的效果，哪些敘述正確？",
         options: [
           "染色可以讓某些細胞構造更明顯。",
@@ -2567,22 +3247,19 @@
     }
 
     function setSlidePosition(x, y, fromUser = false) {
-      const maxX = Math.max(40, (stageWrap.clientWidth / 2) - 72);
-      const maxY = Math.max(35, (stageWrap.clientHeight / 2) - 52);
       lastSlideX = slideX;
       lastSlideY = slideY;
-      slideX = clamp(x, -maxX, maxX);
-      slideY = clamp(y, -maxY, maxY);
-      slide.style.left = `calc(50% + ${slideX}px)`;
-      slide.style.top = `calc(50% + ${slideY}px)`;
-      if (fromUser) {
-        recordLearningOperation("slide");
-        if (slideX > 24) recordLearningOperation("slideRight");
-        if (slideX < -24) recordLearningOperation("slideLeft");
-        if (slideY > 24) recordLearningOperation("slideDown");
-        if (slideY < -24) recordLearningOperation("slideUp");
-      }
-      updateView();
+      slideX = clamp(x, -90, 90);
+      slideY = clamp(y, -60, 60);
+      const displayScale = getStageDisplayScale();
+      slide.style.left = `calc(50% + ${slideX * displayScale}px)`;
+      slide.style.top = `calc(50% + ${slideY * displayScale}px)`;
+      if (fromUser) handleSimulationInput("slide");
+      else updateView();
+    }
+
+    function getStageDisplayScale() {
+      return Math.min(stageWrap.clientWidth / 440, stageWrap.clientHeight / 280);
     }
 
     function createSpecimen(type) {
@@ -2715,26 +3392,26 @@
     function getSpecimenName(type) {
       const map = {
         e: "字母 e",
-        onion_raw: "洋蔥表皮（原始）",
-        onion_blue: "洋蔥表皮（亞甲藍染色）",
-        cheek_raw: "口腔皮膜（原始）",
-        cheek_blue: "口腔皮膜（亞甲藍染色）"
+        onion_raw: "洋蔥表皮細胞（未染色）",
+        onion_blue: "洋蔥表皮細胞（亞甲藍染色）",
+        cheek_raw: "口腔上皮細胞（未染色）",
+        cheek_blue: "口腔上皮細胞（亞甲藍染色）"
       };
-      return map[type] || type;
+      return t(map[type] || type);
     }
 
     function getBrightnessLabel(score) {
-      if (score >= 76) return "明亮";
-      if (score >= 46) return "中等";
-      if (score >= 24) return "偏暗";
-      return "太暗";
+      if (score >= 76) return t("明亮");
+      if (score >= 46) return t("中等");
+      if (score >= 24) return t("偏暗");
+      return t("太暗");
     }
 
     function getFocusLabel(score) {
-      if (score >= 88) return "清楚";
-      if (score >= 60) return "略模糊";
-      if (score >= 35) return "模糊";
-      return "嚴重失焦";
+      if (score >= 88) return t("清楚");
+      if (score >= 60) return t("略模糊");
+      if (score >= 35) return t("模糊");
+      return t("嚴重失焦");
     }
 
     function updateDirectionInfo() {
@@ -2762,6 +3439,38 @@
       directionInfo.textContent = parts.join(" ");
     }
 
+    function getSimulationState() {
+      const state = {
+        specimen: specimenSelect.value, objective: Number(objectiveSelect.value), ocular: Number(ocularSelect.value),
+        coarse: Number(coarseFocus.value), fine: Number(fineFocus.value), light: Number(lightControl.value), x: slideX, y: slideY
+      };
+      state.stagePosition = state.coarse + state.fine * 0.15;
+      state.total = state.objective * state.ocular;
+      state.blur = Math.max(0, (Math.abs(state.stagePosition) - objectiveData[state.objective].baseBlurTolerance) / 7);
+      state.focus = clamp(Math.round(100 - state.blur * 28), 8, 100);
+      const darkness = state.total <= 40 ? .20 : state.total <= 100 ? .36 : state.total <= 400 ? .60 : .74;
+      state.mask = clamp(darkness - state.light / 100 * .44, .045, .82);
+      state.brightness = Math.round((1 - state.mask) * 100);
+      return state;
+    }
+
+    function handleSimulationInput(type) {
+      const before = lastSimulationState || getSimulationState();
+      collisionBlocked = false;
+      let after = getSimulationState();
+      // The illustrated stage starts at y=202; a 40x objective ends at y=186.
+      if (after.objective === 40 && after.stagePosition < -40) {
+        collisionBlocked = true;
+        if (type === "fine") fineFocus.value = Math.ceil((-40 - after.coarse) / .15);
+        else coarseFocus.value = Math.ceil(-40 - after.fine * .15);
+        after = getSimulationState();
+        addOperationIssue("safety");
+      }
+      recordLearningOperation(type, before, after);
+      if (type === "specimen") updateSpecimen();
+      else updateView();
+    }
+
     function updateView() {
       const obj = Number(objectiveSelect.value);
       const ocu = Number(ocularSelect.value);
@@ -2776,7 +3485,7 @@
       const objInfo = objectiveData[obj];
       const ocuInfo = ocularData[ocu];
       const totalMagnification = obj * ocu;
-      const scale = totalMagnification / 20 * 0.42;
+      const scale = totalMagnification / 20 * 0.42 * field.clientWidth / 320;
       const offsetX = -slideX * scale;
       const offsetY = -slideY * scale;
 
@@ -2787,33 +3496,12 @@
         `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) scale(${-scale}, ${-scale})`;
 
       const stagePosition = coarse + fine * 0.15;
-      const focusError = Math.abs(stagePosition);
-      const tolerance = objInfo.baseBlurTolerance;
-      let blurPx = 0;
-      let opacity = 1;
-
-      if (focusError > tolerance) {
-        blurPx = (focusError - tolerance) / 7;
-        opacity = Math.max(0.58, 1 - (focusError - tolerance) / 220);
-      }
-
-      let magnificationDarkness = 0;
-      if (totalMagnification <= 40) {
-        magnificationDarkness = 0.20;
-      } else if (totalMagnification <= 100) {
-        magnificationDarkness = 0.36;
-      } else if (totalMagnification <= 400) {
-        magnificationDarkness = 0.60;
-      } else {
-        magnificationDarkness = 0.74;
-      }
-
-      const userLightReduction = (light / 100) * 0.44;
-      let finalMaskOpacity = magnificationDarkness - userLightReduction;
-      finalMaskOpacity = clamp(finalMaskOpacity, 0.045, 0.82);
-
-      const focusScore = clamp(Math.round(100 - blurPx * 28), 8, 100);
-      const brightnessScore = clamp(Math.round((1 - finalMaskOpacity) * 100), 8, 100);
+      const state = getSimulationState();
+      const blurPx = state.blur;
+      const opacity = Math.max(.58, 1 - blurPx * 7 / 220);
+      const finalMaskOpacity = state.mask;
+      const focusScore = state.focus;
+      const brightnessScore = state.brightness;
 
       fieldContent.style.filter = `blur(${blurPx.toFixed(2)}px)`;
       fieldContent.style.opacity = opacity;
@@ -2821,20 +3509,29 @@
 
       const stageShift = stagePosition * 0.18;
       stageMini.style.transform = `translateY(${stageShift}px)`;
+      const nearCollision = obj === 40 && stagePosition < -22;
+      simulationWarning.classList.toggle("is-hidden", !nearCollision && !collisionBlocked);
+      simulationWarning.textContent = t(collisionBlocked
+        ? "已停止向上：物鏡可能碰撞玻片。請將粗調往正值退回，並使用細調對焦。（教學模擬界線）"
+        : "物鏡接近玻片，請勿繼續向上粗調；可反向退回或使用細調。（教學模擬界線）");
 
       const focusLabel = getFocusLabel(focusScore);
       const brightnessLabel = getBrightnessLabel(brightnessScore);
       const atCenter = Math.abs(slideX) < 5 && Math.abs(slideY) < 5;
-      const xText = slideX > 0 ? "右" : slideX < 0 ? "左" : "中央";
-      const yText = slideY > 0 ? "下" : slideY < 0 ? "上" : "中央";
-      const positionLabel = atCenter ? "玻片：中心" : `玻片：偏${yText}${xText}`;
+      const xText = Math.abs(slideX) < 5 ? "" : slideX > 0 ? "右" : "左";
+      const yText = Math.abs(slideY) < 5 ? "" : slideY > 0 ? "下" : "上";
+      const positionLabel = t(atCenter ? "中心" : xText + yText);
 
-      totalMagText.textContent = `物鏡 ${obj}x × 目鏡 ${ocu}x = ${totalMagnification}倍`;
+      const magnificationValues = { objective: obj, ocular: ocu, total: totalMagnification };
+      totalMagText.textContent = t("物鏡 {objective}x × 目鏡 {ocular}x = {total}倍", magnificationValues);
+      controlMagnification.textContent = t("{objective}x × {ocular}x = {total} 倍", magnificationValues);
       focusScoreText.textContent = `${focusScore}%`;
       focusBar.style.width = `${focusScore}%`;
       brightnessText.textContent = brightnessLabel;
       brightnessBar.style.width = `${brightnessScore}%`;
-      if (fieldSummary) fieldSummary.textContent = `${positionLabel}｜清晰度：${focusLabel}｜亮度：${brightnessLabel}`;
+      if (fieldSummary) fieldSummary.textContent = t("玻片：{position}｜清晰度：{focus} {score}%｜亮度：{light}", {
+        position: positionLabel, focus: focusLabel, score: focusScore, light: brightnessLabel
+      });
 
       if (modePill) modePill.textContent = `目前：${objInfo.label}觀察`;
 
@@ -2851,6 +3548,7 @@
       updateDirectionInfo();
       updateLensAppearance();
       syncSegmentButtons();
+      lastSimulationState = state;
       refreshLearningOperationStatus();
     }
 
@@ -2859,7 +3557,9 @@
       document.querySelectorAll("[data-set-select]").forEach((button) => {
         const select = document.getElementById(button.dataset.setSelect);
         if (!select) return;
-        button.classList.toggle("is-active", select.value === button.dataset.value);
+        const selected = select.value === button.dataset.value;
+        button.classList.toggle("is-active", selected);
+        button.setAttribute("aria-pressed", String(selected));
       });
     }
 
@@ -2870,16 +3570,27 @@
 
     function applyLearningHighlights(step) {
       clearLearningHighlights();
-      if (!learningActive || !step) return;
-      step.target.forEach((selector) => {
-        document.querySelectorAll(selector).forEach((el) => {
-          if (el.classList.contains("objective") || el.id === "ocularTube" || el.classList.contains("focus-knob-big") || el.classList.contains("focus-knob-small") || el.id === "stageMini" || el.id === "lightSource") {
-            el.classList.add("part-glow");
-          } else {
-            el.classList.add("learning-highlight");
-          }
-        });
+      structureControlHint.textContent = t("點選顯微鏡構造後可進行調整");
+      if (!learningActive || !step || learningPhase !== "operation") return;
+      const attempt = learningAttempts[learningStepIndex];
+      if (!attempt || attempt.completed || attempt.blockedByPreset) return;
+      const targets = new Set();
+      step.milestones[attempt.checkpoint].target.forEach((selector) => {
+        document.querySelectorAll(selector).forEach((el) => targets.add(el));
       });
+      const controlNames = [];
+      // A hidden adjustment unit must also highlight its visible microscope control.
+      Object.entries(microControlMap).forEach(([type, config]) => {
+        if (!config.units.some((unit) => targets.has(unit))) return;
+        controlNames.push(t(config.label));
+        document.querySelectorAll(`[data-micro-control="${type}"]`).forEach((part) => targets.add(part));
+      });
+      targets.forEach((el) => {
+        el.classList.add(el.matches(".microscope > *") ? "part-glow" : "learning-highlight");
+      });
+      structureControlHint.textContent = controlNames.length
+        ? t("本關請點選發亮的{parts}，展開調整選項。", { parts: controlNames.join(currentLanguage === "en" ? ", " : "、") })
+        : t("點選顯微鏡構造後可進行調整");
     }
 
     function focusCurrentLearningControl(behavior = "smooth") {
@@ -2893,14 +3604,23 @@
 
     function setLearningPhase(phase, options = {}) {
       if (!learningActive) return;
-      if (phase === "answer" && !isCurrentStepOperated()) return;
+      if (phase === "answer" && !learningAnswered && !isCurrentStepOperated()) return;
 
       learningPhase = phase;
+      learningAttempts[learningStepIndex].phase = phase;
       const isOperation = phase === "operation";
+      document.body.classList.remove("learning-result-active");
       document.body.classList.toggle("learning-operation", isOperation);
-      document.body.classList.toggle("learning-answer", !isOperation);
+      document.body.classList.toggle("learning-answer", phase === "answer");
+      learningPanel.classList.remove("show-result");
+      learningSummary.classList.remove("is-hidden");
+      learningResult.classList.add("is-hidden");
       operationPhasePanel.classList.toggle("is-hidden", !isOperation);
-      answerPhasePanel.classList.toggle("is-hidden", isOperation);
+      answerPhasePanel.classList.toggle("is-hidden", phase !== "answer");
+      predictionPhasePanel.classList.toggle("is-hidden", phase !== "prediction");
+      refreshLearningOperationStatus();
+      renderObservationSummary();
+      renderLearningStepNav();
 
       if (options.scroll === true) {
         requestAnimationFrame(() => {
@@ -2910,121 +3630,440 @@
       }
     }
 
+    function resetLearningProgress() {
+      learningResults = Array(learningSteps.length).fill(null);
+      learningAttempts = Array(learningSteps.length).fill(null);
+      learningAnswered = false;
+    }
+
+    function getCompletedLearningCount() {
+      return learningResults.filter(Boolean).length;
+    }
+
+    function renderLearningProgress() {
+      const completed = getCompletedLearningCount();
+      learningCount.textContent = t("第 {level} / {total} 關｜已完成 {completed} 關", { level: learningStepIndex + 1, total: learningSteps.length, completed });
+      learningProgressBar.style.width = `${(completed / learningSteps.length) * 100}%`;
+    }
+
+    function renderLearningStepNav() {
+      learningStepNav.innerHTML = learningSteps.map((_, index) => {
+        const step = getLearningStep(index);
+        const result = learningResults[index];
+        const active = learningPhase !== "result" && index === learningStepIndex;
+        const classes = ["learning-step-button"];
+        if (active) classes.push("is-active");
+        if (result) classes.push("is-complete");
+        if (result && (result.score < 100 || result.operationScore < 100)) classes.push("has-errors");
+        const status = result ? t("，已完成，操作 {operation} 分，概念 {concept} 分", { operation: result.operationScore, concept: result.score }) : t("，未完成");
+        const label = t("第 {level} 關：{title}{status}", { level: index + 1, title: step.title, status });
+        return `<button type="button" class="${classes.join(" ")}" data-learning-step="${index}"${active ? ' aria-current="step"' : ""} aria-label="${label}" title="${step.title}">${index + 1}</button>`;
+      }).join("");
+    }
+
+    function renderLearningFeedback(step, result) {
+      learningOptions.querySelectorAll(".option-item").forEach((item) => {
+        const index = Number(item.dataset.optionIndex);
+        item.classList.remove("correct", "wrong");
+        if (step.answers.includes(index)) item.classList.add("correct");
+        if (result.wrong.includes(index)) item.classList.add("wrong");
+      });
+
+      const line = (indices) => indices.length
+        ? `<ul>${indices.map((index) => `<li>${step.options[index]}</li>`).join("")}</ul>`
+        : `<p>${t("無")}</p>`;
+
+      learningFeedback.classList.add("show");
+      learningFeedback.innerHTML = `
+        <b>${t("操作技能 {operation} 分｜概念理解 {concept} 分", { operation: result.operationScore, concept: result.score })}</b><br>
+        <p>${getPredictionComparison(step, result)}</p>
+        <b>${t("你選對的項目：")}</b>${line(result.rightSelected)}
+        <b>${t("漏選的正確項目：")}</b>${line(result.missed)}
+        <b>${t("誤選的項目：")}</b>${line(result.wrong)}
+        <b>${t("觀念整理：")}</b><br>${step.explanation}
+      `;
+    }
+
+    function updateLearningActionButtons() {
+      const allCompleted = getCompletedLearningCount() === learningSteps.length;
+      submitAnswerBtn.textContent = t(learningAnswered ? "已提交答案" : "提交答案");
+      submitAnswerBtn.disabled = learningAnswered;
+      nextStepBtn.disabled = !learningAnswered;
+      nextStepBtn.textContent = t(allCompleted ? "查看學習結果" : "下一步");
+    }
+
+    function getLearningAssessment(score) {
+      if (score >= 90) return { title: "整體觀念掌握優良", summary: "能正確連結顯微鏡構造、操作方式與視野變化。" };
+      if (score >= 75) return { title: "整體表現良好", summary: "主要概念已建立，少數操作原理需要再確認。" };
+      if (score >= 60) return { title: "基礎觀念已建立", summary: "建議依下方診斷複習得分較低的關卡，再重新挑戰。" };
+      return { title: "建議重新練習核心概念", summary: "先從得分最低的關卡開始複習，配合操作對照下方觀念整理。" };
+    }
+
+    function showLearningResult(reveal = false) {
+      if (getCompletedLearningCount() !== learningSteps.length) return;
+      learningPhase = "result";
+      document.body.classList.remove("learning-operation", "learning-answer");
+      document.body.classList.add("learning-result-active");
+      learningPanel.classList.add("show-result");
+      learningSummary.classList.add("is-hidden");
+      operationPhasePanel.classList.add("is-hidden");
+      answerPhasePanel.classList.add("is-hidden");
+      predictionPhasePanel.classList.add("is-hidden");
+      learningResult.classList.remove("is-hidden");
+      clearLearningHighlights();
+      closeMicroscopeControls();
+
+      renderLearningResult();
+      if (reveal) {
+        requestAnimationFrame(() => {
+          learningResult.scrollIntoView({ block: "start", behavior: "instant" });
+          scoreReport.focus({ preventScroll: true });
+        });
+      }
+    }
+
+    function renderLearningResult() {
+      const totalScore = Math.round(learningResults.reduce((sum, result) => sum + result.score, 0) / learningSteps.length);
+      const operationScore = Math.round(learningResults.reduce((sum, result) => sum + result.operationScore, 0) / learningSteps.length);
+      const perfectCount = learningResults.filter((result) => result.score === 100).length;
+      const assessment = getLearningAssessment(totalScore);
+
+      learningResultScore.textContent = totalScore;
+      learningOperationScore.textContent = operationScore;
+      scoreReport.textContent = t("回報老師：已完成 8／8 關｜操作技能 {operation}／100｜概念理解 {concept}／100", { operation: operationScore, concept: totalScore });
+      learningResultTitle.textContent = t(assessment.title);
+      learningResultSummary.textContent = t("已完成全部 {total} 關，其中 {perfect} 關概念題全對。{summary} 兩項分數分別取八關平均。請自行回報老師，重新整理後成績會清除。", { total: learningSteps.length, perfect: perfectCount, summary: t(assessment.summary) });
+      learningDiagnosisList.innerHTML = learningSteps.map((_, index) => {
+        const step = getLearningStep(index);
+        const result = learningResults[index];
+        const needsReview = result.score < 100 || result.operationScore < 100;
+        const advice = needsReview ? t("觀念修正：{explanation}", { explanation: step.explanation }) : t("本關觀念掌握完整。");
+        const missedConcepts = result.missed.length
+          ? `<p><b>${t("漏選的正確觀念：")}</b>${result.missed.map((optionIndex) => step.options[optionIndex]).join(" ")}</p>`
+          : "";
+        const misconceptions = result.wrong.length
+          ? `<p><b>${t("誤選的敘述：")}</b>${result.wrong.map((optionIndex) => step.options[optionIndex]).join(" ")}</p>`
+          : "";
+        return `
+          <article class="learning-diagnosis-item${needsReview ? " needs-review" : ""}">
+            <h4><span>${t("第 {level} 關｜{title}", { level: index + 1, title: step.title })}</span><span>${t("操作 {operation}｜概念 {concept}", { operation: result.operationScore, concept: result.score })}</span></h4>
+            <p>${result.issues.length ? result.issues.map((code) => t(operationIssueText[code])).join(" ") : t("已依指定條件完成操作。")}</p>
+            <p>${getPredictionComparison(step, result)}</p>
+            ${missedConcepts}
+            ${misconceptions}
+            <p>${advice}</p>
+          </article>
+        `;
+      }).join("");
+      reviewLearningBtn.textContent = t(perfectCount === learningSteps.length && operationScore === 100 ? "回到關卡" : "複習需加強關卡");
+      resetBtn.textContent = t("重新開始模擬");
+      renderLearningStepNav();
+    }
+
     function startLearningMode() {
+      if (!learningAttempts.length) resetLearningProgress();
       learningActive = true;
       document.body.classList.add("learning-active");
-      learningStepIndex = 0;
       learningPanel.classList.remove("is-hidden");
-      learningToggleBtn.textContent = "關閉學習模式";
-      learningTopBtn.textContent = "關閉學習模式";
-      loadLearningStep(0);
+      learningToggleBtn.textContent = t("關閉學習模式");
+      learningTopBtn.textContent = t("關閉學習模式");
+      learningTopBtn.setAttribute("aria-expanded", "true");
+      loadLearningStep(learningStepIndex, false);
+      if (getCompletedLearningCount() === learningSteps.length) showLearningResult();
     }
 
     function exitLearningMode() {
+      saveCurrentAttempt();
       learningActive = false;
-      document.body.classList.remove("learning-active", "learning-operation", "learning-answer");
+      document.body.classList.remove("learning-active", "learning-operation", "learning-answer", "learning-result-active");
       learningPanel.classList.add("is-hidden");
-      learningToggleBtn.textContent = "開啟學習模式";
-      learningTopBtn.textContent = "開啟學習模式";
+      learningPanel.classList.remove("show-result");
+      learningResult.classList.add("is-hidden");
+      learningToggleBtn.textContent = t("開啟學習模式");
+      learningTopBtn.textContent = t("開啟學習模式");
+      learningTopBtn.setAttribute("aria-expanded", "false");
       clearLearningHighlights();
+      structureControlHint.textContent = t("點選顯微鏡構造後可進行調整");
+      closeMicroscopeControls();
+      resetBtn.textContent = t("重新開始模擬");
       updateView();
     }
 
-    function loadLearningStep(index) {
+    function loadLearningStep(index, save = true) {
+      if (save) saveCurrentAttempt();
+      delete learningFeedback.dataset.validation;
       learningStepIndex = clamp(index, 0, learningSteps.length - 1);
-      learningAnswered = false;
-      currentStepHistory = new Set();
       const step = learningSteps[learningStepIndex];
+      const savedResult = learningResults[learningStepIndex];
+      learningAnswered = Boolean(savedResult);
 
+      closeMicroscopeControls();
       learningInternalUpdate = true;
-      step.prepare();
+      if (!learningAttempts[learningStepIndex]) {
+        specimenSelect.value = "e";
+        step.prepare();
+        updateSpecimen();
+        const baseline = getSimulationState();
+        learningAttempts[learningStepIndex] = {
+          phase: "prediction", prediction: null, checkpoint: 0, completed: false, issues: [],
+          baseline, snapshot: baseline, selected: [], notice: "", blockedByPreset: false
+        };
+      } else {
+        restoreSimulation(learningAttempts[learningStepIndex].snapshot);
+      }
       learningInternalUpdate = false;
+      const attempt = learningAttempts[learningStepIndex];
+      collisionBlocked = false;
 
-      learningCount.textContent = `第 ${learningStepIndex + 1} / ${learningSteps.length} 關`;
-      learningProgressBar.style.width = `${((learningStepIndex + 1) / learningSteps.length) * 100}%`;
+      renderLearningContent();
+      updateView();
+      if (savedResult) {
+        clearLearningHighlights();
+        structureControlHint.textContent = t("點選顯微鏡構造後可進行調整");
+        setLearningPhase("answer", { scroll: false });
+      } else {
+        setLearningPhase(attempt.phase, { scroll: false });
+      }
+    }
+
+    function renderLearningContent() {
+      const step = getLearningStep(learningStepIndex);
+      const savedResult = learningResults[learningStepIndex];
+      const attempt = learningAttempts[learningStepIndex];
       learningTitle.textContent = step.title;
-      learningInstruction.innerHTML = `<b>任務：</b>${step.instruction}`;
-      learningQuestion.innerHTML = `<b>複選題：</b>${step.question}`;
+      learningInstruction.innerHTML = `<b>${t("任務：")}</b>${step.instruction}`;
+      learningQuestion.innerHTML = `<b>${t("複選題：")}</b>${step.question}`;
       learningFeedback.classList.remove("show");
       learningFeedback.innerHTML = "";
+      predictionQuestion.textContent = step.prediction.question;
+      const predictionChoice = attempt.prediction ?? attempt.predictionDraft;
+      predictionOptions.innerHTML = step.prediction.options.map((text, optionIndex) => `
+        <label class="option-item"><input type="radio" name="prediction" value="${optionIndex}"${predictionChoice === optionIndex ? " checked" : ""}><span>${text}</span></label>
+      `).join("");
+      submitPredictionBtn.disabled = predictionChoice === undefined;
 
       learningOptions.innerHTML = step.options.map((text, index) => `
         <label class="option-item" data-option-index="${index}">
-          <input type="checkbox" value="${index}">
+          <input type="checkbox" value="${index}"${(savedResult?.selected || attempt.selected).includes(index) ? " checked" : ""}${savedResult ? " disabled" : ""}>
           <span>${text}</span>
         </label>
       `).join("");
 
-      prevStepBtn.disabled = learningStepIndex === 0;
-      nextStepBtn.disabled = learningStepIndex === learningSteps.length - 1;
-      submitAnswerBtn.disabled = false;
-      applyLearningHighlights(step);
-      updateView();
-      refreshLearningOperationStatus();
-      setLearningPhase("operation", { scroll: false });
+      renderLearningProgress();
+      updateLearningActionButtons();
+      if (savedResult) renderLearningFeedback(step, savedResult);
+      else if (learningFeedback.dataset.validation) renderLearningValidation(learningFeedback.dataset.validation);
+      resetBtn.textContent = t(savedResult ? "重新開始模擬" : "重試本關");
     }
 
-    function recordLearningOperation(type) {
-      if (!learningActive || learningInternalUpdate) return;
-      currentStepHistory.add(type);
-      refreshLearningOperationStatus();
+    function saveCurrentAttempt() {
+      const attempt = learningAttempts[learningStepIndex];
+      if (!learningActive || !attempt || learningInternalUpdate) return;
+      attempt.snapshot = getSimulationState();
+      if (!learningAnswered) attempt.selected = Array.from(learningOptions.querySelectorAll("input:checked"), (input) => Number(input.value));
+      if (learningPhase === "prediction") {
+        const draft = predictionOptions.querySelector("input:checked");
+        if (draft) attempt.predictionDraft = Number(draft.value);
+      }
+    }
+
+    function restoreSimulation(snapshot) {
+      specimenSelect.value = snapshot.specimen;
+      objectiveSelect.value = snapshot.objective;
+      ocularSelect.value = snapshot.ocular;
+      coarseFocus.value = snapshot.coarse;
+      fineFocus.value = snapshot.fine;
+      lightControl.value = snapshot.light;
+      setSlidePosition(snapshot.x, snapshot.y);
+      updateSpecimen();
+    }
+
+    function submitPrediction() {
+      if (!learningActive || learningPhase !== "prediction") return;
+      const selected = predictionOptions.querySelector("input:checked");
+      if (!selected) return;
+      const attempt = learningAttempts[learningStepIndex];
+      attempt.prediction = Number(selected.value);
+      learningInternalUpdate = true;
+      restoreSimulation(attempt.baseline);
+      learningInternalUpdate = false;
+      setLearningPhase("operation");
+    }
+
+    const operationIssueText = {
+      sequence: "操作順序需要修正：依畫面步驟先完成前置操作，再進行下一步。",
+      condition: "曾改動本關要求固定的設定，或未依指定調整方向操作。請對照任務要求。",
+      safety: "曾觸發高倍碰撞保護：避免讓載物台過度接近物鏡，退回後使用細調。"
+    };
+
+    function addOperationIssue(code, notice = operationIssueText[code]) {
+      const attempt = learningAttempts[learningStepIndex];
+      if (!learningActive || learningInternalUpdate || !attempt || attempt.prediction === null || learningAnswered || attempt.completed || attempt.blockedByPreset) return;
+      if (!attempt.issues.includes(code)) attempt.issues.push(code);
+      attempt.notice = notice;
+    }
+
+    function recordLearningOperation(type, before, after) {
+      const attempt = learningAttempts[learningStepIndex];
+      if (!learningActive || learningInternalUpdate || !attempt || learningPhase !== "operation" || learningAnswered || attempt.completed || attempt.blockedByPreset) return;
+      const step = learningSteps[learningStepIndex];
+      const start = attempt.baseline;
+      const centered = (state) => Math.abs(state.x) < 5 && Math.abs(state.y) < 5;
+      if ((step.fixed || []).some((key) => after[key] !== start[key])) {
+        if ((step.fixed || []).some((key) => after[key] !== before[key])) addOperationIssue("condition");
+        attempt.checkpoint = 0;
+        attempt.notice = "請先恢復任務指定的固定設定，再完成操作。也可以按「重試本關」。";
+        return;
+      }
+      let done = false;
+      switch (step.id) {
+        case "slide_reverse":
+          done = type === "slide" && after.x - start.x >= 24;
+          break;
+        case "coarse_focus":
+          done = type === "coarse" && Math.abs(after.coarse - start.coarse) >= 15 && after.focus >= 90 && after.focus > start.focus;
+          break;
+        case "fine_focus":
+          if (type === "fine" && after.fine > 0) addOperationIssue("condition", "本關請往負值調整細調節輪，觀察影像變清楚。往正值會更偏離焦點。");
+          done = type === "fine" && after.fine <= -6 && after.focus >= 94 && after.focus > start.focus;
+          break;
+        case "objective_lens":
+          done = type === "objective" && before.objective < 40 && after.objective === 40;
+          break;
+        case "ocular_lens":
+          done = type === "ocular" && before.ocular === 5 && after.ocular >= 10 && after.total > start.total;
+          break;
+        case "light_source":
+          if (type !== "light") break;
+          if (attempt.checkpoint === 0 && after.light <= 30 && after.light < before.light) {
+            attempt.checkpoint = 1;
+            attempt.darkBrightness = after.brightness;
+            attempt.notice = "已觀察低亮度；接著把光源提高至 65 以上。";
+          } else if (attempt.checkpoint === 0 && after.light >= 65) {
+            addOperationIssue("sequence", "尚未先降低光源。請先降至 30 以下，再提高至 65 以上。");
+          } else if (attempt.checkpoint === 1 && after.light >= 65 && after.brightness > attempt.darkBrightness) {
+            done = true;
+          }
+          break;
+        case "low_to_high":
+          if (type === "objective" && after.objective === 40) {
+            done = attempt.checkpoint === 2 && before.objective === 4 && centered(before) && centered(after);
+            if (!done) {
+              addOperationIssue("sequence", "尚未依序完成低倍與置中。請回到 4x，把標本移到中心，再切換 40x；標本偏移時可能離開高倍視野。");
+              attempt.checkpoint = 0;
+            }
+          } else if (type === "objective" && after.objective === 4) {
+            attempt.checkpoint = 1;
+            attempt.notice = "已選擇 4x。請移動玻片或按「中心」，確認標本置中。";
+          } else if (attempt.checkpoint >= 1 && type === "slide" && after.objective === 4) {
+            attempt.checkpoint = centered(after) ? 2 : 1;
+            attempt.notice = centered(after) ? "已在低倍下置中。現在可以切換 40x。" : "繼續移動玻片，直到位置顯示「中心」。";
+          } else if (type === "objective" && after.objective !== 4) {
+            attempt.checkpoint = 0;
+          }
+          break;
+        case "stain_effect":
+          done = type === "specimen" && before.specimen === "onion_raw" && after.specimen === "onion_blue";
+          break;
+      }
+      if (done) {
+        attempt.checkpoint = step.milestones.length;
+        attempt.completed = true;
+        attempt.operationEnd = after;
+        attempt.notice = "";
+      }
+      attempt.snapshot = after;
     }
 
     function isCurrentStepOperated() {
       if (!learningActive) return false;
-      return learningSteps[learningStepIndex].isOperated();
+      return Boolean(learningAttempts[learningStepIndex]?.completed);
     }
 
     function refreshLearningOperationStatus() {
-      if (!learningActive || !operationStatus) return;
+      const attempt = learningAttempts[learningStepIndex];
+      if (!learningActive || learningInternalUpdate || !operationStatus || !attempt) return;
       const done = isCurrentStepOperated();
+      const step = getLearningStep(learningStepIndex);
+      operationChecklist.innerHTML = step.milestones.map((milestone, index) => `<li class="${index < attempt.checkpoint ? "done" : index === attempt.checkpoint ? "current" : ""}">${milestone.label}${index < attempt.checkpoint ? t("（已完成）") : ""}</li>`).join("");
       operationStatus.classList.toggle("done", done);
-      operationStatus.textContent = done ? "已偵測到指定操作，可以回答複選題。" : "請先完成指定操作，再回答複選題。";
+      operationStatus.textContent = t(done ? "已完成指定操作，請比較觀察結果再作答。" : "請依序完成上方步驟，再前往作答。");
+      operationNotice.textContent = t(attempt.notice);
+      operationNotice.classList.toggle("is-hidden", !attempt.notice);
       goToAnswerBtn.disabled = !done;
-      goToAnswerBtn.textContent = done ? "前往作答" : "完成指定操作後前往作答";
+      goToAnswerBtn.textContent = t(done ? "觀察完成，前往作答" : "完成指定操作後前往作答");
+      applyLearningHighlights(step);
+    }
+
+    function renderObservationSummary() {
+      const attempt = learningAttempts[learningStepIndex];
+      const end = attempt.operationEnd;
+      if (!end) { observationSummary.textContent = ""; return; }
+      const start = attempt.baseline;
+      observationSummary.textContent = [t("操作前 → 完成時：總倍率 {totalBefore} → {totalAfter} 倍；清晰度 {focusBefore}% → {focusAfter}%；亮度 {lightBefore}% → {lightAfter}%。", {
+        totalBefore: start.total, totalAfter: end.total, focusBefore: start.focus, focusAfter: end.focus, lightBefore: start.brightness, lightAfter: end.brightness
+      }), attempt.darkBrightness !== undefined ? t("曾將亮度降至 {brightness}%。", { brightness: attempt.darkBrightness }) : "",
+      t(learningSteps[learningStepIndex].id === "slide_reverse" ? "玻片往右，請對照視野影像的方向。" : "請依實際觀察回答下方複選題。")].filter(Boolean).join(" ");
+    }
+
+    function getPredictionComparison(step, result) {
+      const predictionCorrect = result.prediction === step.prediction.answer;
+      return t("預測：「{prediction}」（{status}，不計分）。觀察後{outcome}。", {
+        prediction: step.prediction.options[result.prediction], status: t(predictionCorrect ? "正確" : "需修正"),
+        outcome: t(result.isAllCorrect ? "本關作答全對" : "仍有漏選或誤選，請對照觀念整理")
+      });
+    }
+
+    function renderLearningValidation(reason) {
+      learningFeedback.dataset.validation = reason;
+      learningFeedback.classList.add("show");
+      learningFeedback.innerHTML = reason === "operation"
+        ? `<b>${t("尚未完成操作。")}</b><br>${t("請先依照任務調整指定構造，再提交答案。")}`
+        : `<b>${t("請至少選擇一個答案。")}</b>`;
     }
 
     function submitLearningAnswer() {
-      if (!learningActive) return;
-      const step = learningSteps[learningStepIndex];
-      if (!step.isOperated()) {
-        learningFeedback.classList.add("show");
-        learningFeedback.innerHTML = "<b>尚未完成操作。</b><br>請先依照任務調整指定構造，再提交答案。";
+      if (!learningActive || learningAnswered) return;
+      const step = getLearningStep(learningStepIndex);
+      if (!isCurrentStepOperated()) {
+        renderLearningValidation("operation");
         return;
       }
 
       const selected = Array.from(learningOptions.querySelectorAll("input:checked")).map((input) => Number(input.value));
+      if (selected.length === 0) {
+        renderLearningValidation("empty");
+        return;
+      }
       const correct = new Set(step.answers);
       const selectedSet = new Set(selected);
       const missed = step.answers.filter((index) => !selectedSet.has(index));
       const wrong = selected.filter((index) => !correct.has(index));
       const rightSelected = selected.filter((index) => correct.has(index));
       const isAllCorrect = missed.length === 0 && wrong.length === 0;
+      const score = Math.round((Math.max(0, rightSelected.length - wrong.length) / step.answers.length) * 100);
+      const attempt = learningAttempts[learningStepIndex];
+      const operationScore = Math.max(0, 100 - attempt.issues.length * 20);
+      const result = { selected, missed, wrong, rightSelected, isAllCorrect, score, operationScore, issues: [...attempt.issues], prediction: attempt.prediction };
 
-      learningOptions.querySelectorAll(".option-item").forEach((item) => {
-        const index = Number(item.dataset.optionIndex);
-        item.classList.remove("correct", "wrong");
-        if (correct.has(index)) item.classList.add("correct");
-        if (wrong.includes(index)) item.classList.add("wrong");
-      });
-
-      const line = (indices) => indices.length
-        ? `<ul>${indices.map((index) => `<li>${step.options[index]}</li>`).join("")}</ul>`
-        : "<p>無</p>";
-
-      learningFeedback.classList.add("show");
-      learningFeedback.innerHTML = `
-        <b>${isAllCorrect ? "完全正確。" : "還可以再修正概念。"}</b><br>
-        <b>你選對的項目：</b>${line(rightSelected)}
-        <b>漏選的正確項目：</b>${line(missed)}
-        <b>誤選的項目：</b>${line(wrong)}
-        <b>概念整理：</b><br>${step.explanation}
-      `;
+      learningResults[learningStepIndex] = result;
+      delete learningFeedback.dataset.validation;
       learningAnswered = true;
+      learningOptions.querySelectorAll("input").forEach((input) => { input.disabled = true; });
+      renderLearningFeedback(step, result);
+      renderLearningProgress();
+      renderLearningStepNav();
+      updateLearningActionButtons();
     }
 
-    function moveLearningStep(delta) {
-      const nextIndex = clamp(learningStepIndex + delta, 0, learningSteps.length - 1);
+    function advanceLearningStep() {
+      if (!learningAnswered) return;
+      if (getCompletedLearningCount() === learningSteps.length) {
+        showLearningResult(true);
+        return;
+      }
+      const remainingAfter = learningResults.findIndex((result, index) => index > learningStepIndex && !result);
+      const nextIndex = remainingAfter >= 0 ? remainingAfter : learningResults.findIndex((result) => !result);
       loadLearningStep(nextIndex);
     }
 
@@ -3049,8 +4088,8 @@
       if (!dragging) return;
       e.preventDefault();
       const pos = getClientPos(e);
-      const dx = pos.x - startX;
-      const dy = pos.y - startY;
+      const dx = (pos.x - startX) / getStageDisplayScale();
+      const dy = (pos.y - startY) / getStageDisplayScale();
       setSlidePosition(initialX + dx, initialY + dy, true);
     }
 
@@ -3066,7 +4105,12 @@
     }
 
     function applyPreset(name) {
-      recordLearningOperation(`preset:${name}`);
+      const attempt = learningAttempts[learningStepIndex];
+      if (learningActive && attempt && !learningAnswered && !attempt.completed && learningPhase === "operation") {
+        attempt.blockedByPreset = true;
+        attempt.notice = "目前為情境示範，不計入操作完成。請按「重試本關」恢復起始狀態，再親自完成步驟。";
+      }
+      collisionBlocked = false;
       if (name === "lowSearch") {
         objectiveSelect.value = "4";
         ocularSelect.value = "10";
@@ -3096,8 +4140,6 @@
         fineFocus.value = "18";
       }
 
-      recordLearningOperation(`objective:${objectiveSelect.value}`);
-      recordLearningOperation(`ocular:${ocularSelect.value}`);
       updateView();
     }
 
@@ -3108,33 +4150,12 @@
     window.addEventListener("mouseup", endDrag);
     window.addEventListener("touchend", endDrag);
 
-    specimenSelect.addEventListener("change", () => {
-      recordLearningOperation("specimen");
-      recordLearningOperation(`specimen:${specimenSelect.value}`);
-      updateSpecimen();
-    });
-    objectiveSelect.addEventListener("change", () => {
-      recordLearningOperation("objective");
-      recordLearningOperation(`objective:${objectiveSelect.value}`);
-      updateView();
-    });
-    ocularSelect.addEventListener("change", () => {
-      recordLearningOperation("ocular");
-      recordLearningOperation(`ocular:${ocularSelect.value}`);
-      updateView();
-    });
-    coarseFocus.addEventListener("input", () => {
-      recordLearningOperation("coarse");
-      updateView();
-    });
-    fineFocus.addEventListener("input", () => {
-      recordLearningOperation("fine");
-      updateView();
-    });
-    lightControl.addEventListener("input", () => {
-      recordLearningOperation("light");
-      updateView();
-    });
+    specimenSelect.addEventListener("change", () => handleSimulationInput("specimen"));
+    objectiveSelect.addEventListener("change", () => handleSimulationInput("objective"));
+    ocularSelect.addEventListener("change", () => handleSimulationInput("ocular"));
+    coarseFocus.addEventListener("input", () => handleSimulationInput("coarse"));
+    fineFocus.addEventListener("input", () => handleSimulationInput("fine"));
+    lightControl.addEventListener("input", () => handleSimulationInput("light"));
     crosshairToggle.addEventListener("change", updateView);
     stageGuideToggle.addEventListener("change", updateView);
     eyepiecePointerToggle.addEventListener("change", updateView);
@@ -3149,10 +4170,10 @@
     });
 
     const microControlMap = {
-      objective: { group: basicControls, units: [objectiveControl] },
-      ocular: { group: basicControls, units: [ocularControl] },
-      focus: { group: focusLightControls, units: [coarseControl, fineControl] },
-      light: { group: focusLightControls, units: [lightControlWrap] }
+      objective: { label: "物鏡", group: basicControls, units: [objectiveControl] },
+      ocular: { label: "目鏡", group: basicControls, units: [ocularControl] },
+      focus: { label: "調節輪", group: focusLightControls, units: [coarseControl, fineControl] },
+      light: { label: "光源", group: focusLightControls, units: [lightControlWrap] }
     };
     let activeMicroscopeControl = "";
 
@@ -3161,7 +4182,10 @@
       activeMicroscopeControl = "";
       [basicControls, focusLightControls].forEach((group) => group?.classList.remove("is-visible"));
       [objectiveControl, ocularControl, coarseControl, fineControl, lightControlWrap].forEach((unit) => unit?.classList.remove("is-visible"));
-      document.querySelectorAll("[data-micro-control].is-active-control").forEach((part) => part.classList.remove("is-active-control"));
+      document.querySelectorAll("[data-micro-control]").forEach((part) => {
+        part.classList.remove("is-active-control");
+        part.setAttribute("aria-expanded", "false");
+      });
     }
 
     function openMicroscopeControl(type) {
@@ -3177,11 +4201,16 @@
       [objectiveControl, ocularControl, coarseControl, fineControl, lightControlWrap].forEach((unit) => unit?.classList.remove("is-visible"));
       config.group?.classList.add("is-visible");
       config.units.forEach((unit) => unit?.classList.add("is-visible"));
-      document.querySelectorAll("[data-micro-control].is-active-control").forEach((part) => part.classList.remove("is-active-control"));
-      document.querySelectorAll(`[data-micro-control="${type}"]`).forEach((part) => part.classList.add("is-active-control"));
+      document.querySelectorAll("[data-micro-control]").forEach((part) => {
+        const selected = part.dataset.microControl === type;
+        part.classList.toggle("is-active-control", selected);
+        part.setAttribute("aria-expanded", String(selected));
+      });
     }
 
     document.querySelectorAll("[data-micro-control]").forEach((part) => {
+      part.setAttribute("aria-controls", "microscopeControls");
+      part.setAttribute("aria-expanded", "false");
       part.addEventListener("click", (event) => {
         event.stopPropagation();
         openMicroscopeControl(part.dataset.microControl);
@@ -3198,6 +4227,10 @@
       closeMicroscopeControls();
     });
 
+    microscopeBodyWrap.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeMicroscopeControls();
+    });
+
     document.querySelectorAll("[data-nudge]").forEach((button) => {
       button.addEventListener("click", () => nudgeSlide(button.dataset.nudge));
     });
@@ -3206,7 +4239,7 @@
       button.addEventListener("click", () => applyPreset(button.dataset.preset));
     });
 
-    centerBtn.addEventListener("click", () => { recordLearningOperation("center"); setSlidePosition(0, 0, true); });
+    centerBtn.addEventListener("click", () => setSlidePosition(0, 0, true));
 
     centerFocusBtn.addEventListener("click", () => {
       coarseFocus.value = "0";
@@ -3215,6 +4248,21 @@
     });
 
     resetBtn.addEventListener("click", () => {
+      collisionBlocked = false;
+      if (learningActive && !learningAnswered && learningPhase !== "result") {
+        const attempt = learningAttempts[learningStepIndex];
+        attempt.checkpoint = 0;
+        attempt.completed = false;
+        attempt.blockedByPreset = false;
+        attempt.notice = "已恢復本關起始設定，請重新操作。";
+        attempt.phase = attempt.prediction === null ? "prediction" : "operation";
+        attempt.snapshot = attempt.baseline;
+        attempt.selected = [];
+        delete attempt.operationEnd;
+        delete attempt.darkBrightness;
+        loadLearningStep(learningStepIndex, false);
+        return;
+      }
       specimenSelect.value = "e";
       objectiveSelect.value = "10";
       ocularSelect.value = "10";
@@ -3238,12 +4286,28 @@
       if (learningActive) exitLearningMode();
       else startLearningMode();
     });
+    learningTopBtn.setAttribute("aria-controls", "learningBlock");
+    learningTopBtn.setAttribute("aria-expanded", "false");
 
     exitLearningBtn.addEventListener("click", exitLearningMode);
+    predictionOptions.addEventListener("change", () => { submitPredictionBtn.disabled = false; });
+    submitPredictionBtn.addEventListener("click", submitPrediction);
     goToAnswerBtn.addEventListener("click", () => setLearningPhase("answer"));
     submitAnswerBtn.addEventListener("click", submitLearningAnswer);
-    prevStepBtn.addEventListener("click", () => moveLearningStep(-1));
-    nextStepBtn.addEventListener("click", () => moveLearningStep(1));
+    nextStepBtn.addEventListener("click", advanceLearningStep);
+    learningStepNav.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-learning-step]");
+      if (!button) return;
+      loadLearningStep(Number(button.dataset.learningStep));
+    });
+    reviewLearningBtn.addEventListener("click", () => {
+      const lowestScore = Math.min(...learningResults.map((result) => Math.min(result.score, result.operationScore)));
+      loadLearningStep(learningResults.findIndex((result) => Math.min(result.score, result.operationScore) === lowestScore));
+    });
+    restartLearningBtn.addEventListener("click", () => {
+      resetLearningProgress();
+      loadLearningStep(0);
+    });
 
     window.addEventListener("keydown", (event) => {
       const activeTag = document.activeElement?.tagName?.toLowerCase();
@@ -3258,6 +4322,51 @@
     });
 
     window.addEventListener("resize", () => setSlidePosition(slideX, slideY));
+
+    // Retain original static text nodes so labels can change without replacing controls.
+    const staticText = [];
+    const textWalker = document.createTreeWalker(appRoot, NodeFilter.SHOW_TEXT);
+    while (textWalker.nextNode()) {
+      const node = textWalker.currentNode;
+      if (node.parentElement.closest("script, style, .language-bar")) continue;
+      const source = node.textContent.trim();
+      if (Object.hasOwn(translations, source)) staticText.push({ node, source });
+    }
+    const staticLabels = Array.from(appRoot.querySelectorAll("[aria-label]"))
+      .filter((element) => !element.matches("[data-language]"))
+      .map((element) => ({ element, source: element.getAttribute("aria-label") }));
+
+    function setLanguage(language) {
+      if (!["zh-TW", "en", "ja"].includes(language) || language === currentLanguage) return;
+      saveCurrentAttempt();
+      currentLanguage = language;
+      document.documentElement.lang = language;
+      document.title = t("複式顯微鏡模擬｜學習模式版");
+      staticText.forEach(({ node, source }) => { if (node.isConnected) node.textContent = t(source); });
+      staticLabels.forEach(({ element, source }) => element.setAttribute("aria-label", t(source)));
+      languageBar.querySelectorAll("[data-language]").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.language === language));
+      });
+      learningTopBtn.textContent = t(learningActive ? "關閉學習模式" : "學習模式");
+      learningToggleBtn.textContent = t(learningActive ? "關閉學習模式" : "開啟學習模式");
+      if (learningActive) {
+        if (learningPhase === "result") renderLearningResult();
+        else {
+          renderLearningContent();
+          renderLearningStepNav();
+          renderObservationSummary();
+        }
+      } else {
+        resetBtn.textContent = t("重新開始模擬");
+        structureControlHint.textContent = t("點選顯微鏡構造後可進行調整");
+      }
+      updateView();
+    }
+    languageBar.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const button = event.target.closest("[data-language]");
+      if (button) setLanguage(button.dataset.language);
+    });
 
     updateSpecimen();
     setSlidePosition(0, 0);
