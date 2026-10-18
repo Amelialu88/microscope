@@ -2533,185 +2533,201 @@
 
   <script>
     let currentLanguage = "zh-TW";
-    const MICROSCOPE_SUBMIT_URL = "https://script.google.com/macros/s/AKfycbwAbUHGSJRgADmu0_sHIzKCAhoT-5ETJbXq8fBuddrMS3hNrjXCFS_tkEc_ZOR6IA5x/exec";
+    // ★★★ 老師請把下面引號裡的文字，換成你自己 Apps Script 部署後的網址（/exec 結尾）★★★
+    const MICROSCOPE_SUBMIT_URL = "https://script.google.com/macros/s/AKfycbyxgovndfcYJq3gB1hCNA7S0CX5J0Yt8tW7YJiXj79KnUogkS2lOrBowDzyBUnay2LW/exec";
     const MICROSCOPE_ACTIVITY_ID = "microscope_202609";
     const translations = {
-      "複式顯微鏡模擬｜學習模式版": ["Compound Microscope Simulator | Learning Mode", "複式顕微鏡シミュレーター｜学習モード"],
-      "複式顯微鏡模擬": ["Compound Microscope Simulator", "複式顕微鏡シミュレーター"],
-      "語言": ["Language", "言語"],
-      "視野": ["View", "視野"],
-      "載物台": ["Stage", "ステージ"],
-      "複式顯微鏡": ["Compound Microscope", "複式顕微鏡"],
-      "標本": ["Specimen", "標本"],
-      "字母 e": ["Letter e", "文字 e"],
-      "洋蔥表皮細胞（未染色）": ["Onion epidermis (unstained)", "タマネギ表皮細胞（未染色）"],
-      "洋蔥表皮細胞（染色）": ["Onion epidermis (stained)", "タマネギ表皮細胞（染色）"],
-      "口腔上皮細胞（未染色）": ["Cheek epithelial cells (unstained)", "口腔上皮細胞（未染色）"],
-      "口腔上皮細胞（染色）": ["Cheek epithelial cells (stained)", "口腔上皮細胞（染色）"],
-      "洋蔥表皮細胞（亞甲藍染色）": ["Onion epidermis (methylene blue)", "タマネギ表皮細胞（メチレンブルー染色）"],
-      "口腔上皮細胞（亞甲藍染色）": ["Cheek epithelial cells (methylene blue)", "口腔上皮細胞（メチレンブルー染色）"],
-      "中心": ["Center", "中央"],
-      "拖曳玻片並調整顯微鏡，觀察視野中的成像變化。": ["Drag the slide and adjust the microscope to observe changes in the image.", "スライドを動かして顕微鏡を調整し、像の変化を観察しましょう。"],
-      "中央圓形與十字線可作為玻片對位參考。": ["Use the center circle and cross as slide alignment guides.", "中央の円と十字線をスライドの位置合わせの目安にできます。"],
-      "顯微鏡操作工作區": ["Microscope workspace", "顕微鏡操作エリア"],
-      "可拖曳玻片": ["Draggable slide", "ドラッグできるスライド"],
-      "玻片方向控制": ["Slide movement controls", "スライドの移動操作"],
-      "玻片向上移動": ["Move slide up", "スライドを上へ移動"],
-      "玻片向下移動": ["Move slide down", "スライドを下へ移動"],
-      "玻片向左移動": ["Move slide left", "スライドを左へ移動"],
-      "玻片向右移動": ["Move slide right", "スライドを右へ移動"],
-      "顯微鏡示意圖": ["Interactive microscope diagram", "操作できる顕微鏡の模式図"],
-      "調整目鏡倍率": ["Adjust eyepiece magnification", "接眼レンズの倍率を調整"],
-      "調整物鏡倍率": ["Adjust objective magnification", "対物レンズの倍率を調整"],
-      "調整粗細調節輪": ["Adjust coarse and fine focus", "粗動・微動ねじを調整"],
-      "調整光源": ["Adjust illumination", "光源を調整"],
-      "構造調整區": ["Adjustments", "調整エリア"],
-      "點選顯微鏡構造後可進行調整": ["Select a microscope part to adjust it.", "顕微鏡の各部を選ぶと調整できます。"],
-      "物鏡": ["Objective", "対物レンズ"],
-      "目鏡": ["Eyepiece", "接眼レンズ"],
-      "調節輪": ["focus knobs", "調節ねじ"],
-      "粗調節輪": ["Coarse focus", "粗動ねじ"],
-      "細調節輪": ["Fine focus", "微動ねじ"],
-      "光源": ["Light", "光源"],
-      "物鏡倍率": ["Objective magnification", "対物レンズの倍率"],
-      "目鏡倍率": ["Eyepiece magnification", "接眼レンズの倍率"],
-      "4x 掃描": ["4x Scanning", "4x 探索"],
-      "10x 低倍": ["10x Low power", "10x 低倍率"],
-      "40x 高倍": ["40x High power", "40x 高倍率"],
-      "顯示目鏡指針": ["Eyepiece pointer", "接眼指針を表示"],
-      "顯示視野十字線": ["View crosshair", "視野の十字線を表示"],
-      "顯示載物台對位線": ["Stage alignment guides", "ステージの位置合わせ線を表示"],
-      "學習模式": ["Learning mode", "学習モード"],
-      "開啟學習模式": ["Start learning", "学習を開始"],
-      "關閉學習模式": ["Close learning", "学習を閉じる"],
-      "離開學習模式": ["Exit learning", "学習を終了"],
-      "進入": ["Start", "開始"],
-      "學習任務": ["Learning task", "学習課題"],
-      "學習關卡": ["Learning levels", "学習ステップ"],
-      "重新開始模擬": ["Reset simulation", "シミュレーションをリセット"],
-      "重試本關": ["Retry this level", "このステップをやり直す"],
-      "任務模擬：": ["Scenarios:", "場面設定："],
-      "低倍找標本": ["Find at low power", "低倍率で標本を探す"],
-      "高倍觀察": ["High-power view", "高倍率で観察"],
-      "太暗": ["Too dark", "暗すぎる"],
-      "失焦": ["Out of focus", "ピンぼけ"],
-      "操作說明": ["How to use", "操作ガイド"],
-      "拖曳玻片或使用方向按鈕移動標本；點選目鏡、物鏡、調節輪或光源，可展開調整選項，再點一次收合。鍵盤可用 Tab 選取構造、Enter 展開，方向鍵調整滑桿。": ["Drag the slide or use the arrow buttons. Select the eyepiece, objective, focus knobs or light to show adjustments; select it again to close them. Use Tab to focus a part, Enter to open it and arrow keys to adjust sliders.", "スライドをドラッグするか矢印ボタンで標本を動かします。接眼レンズ・対物レンズ・調節ねじ・光源を選ぶと調整欄が開き、もう一度選ぶと閉じます。Tabで各部を選択し、Enterで開き、矢印キーでスライダーを調整できます。"],
-      "學習流程：預測 → 操作與觀察 → 作答 → 診斷。八關可自由切換；提交答案後才能選擇下一步。情境按鈕用於示範，學習中使用後請按「重試本關」再親自完成。": ["Learning: predict → operate and observe → answer → diagnosis. Jump freely between eight levels. Submit an answer to unlock Next. Scenarios are demonstrations, not evidence of your work; select Retry this level afterward to complete the steps yourself.", "学習の流れ：予測 → 操作と観察 → 解答 → 診断。8ステップは自由に切り替えられます。解答を提出すると次へ進めます。場面設定は実演用です。学習中に使った場合は「このステップをやり直す」を押し、自分で操作してください。"],
-      "40x 下若載物台過度靠近物鏡，系統會提醒並停止繼續靠近；反向調整仍可退回。這是教學模擬保護界線，不代表實際儀器的安全距離。": ["At 40x, moving the stage too close to the objective triggers a warning and stops further approach. You can still move it away. This teaching boundary is not a safe-distance specification for real equipment.", "40xでステージが対物レンズに近づきすぎると警告し、それ以上の接近を止めます。逆方向には戻せます。これは学習用の保護境界であり、実機の安全距離を示すものではありません。"],
-      "完成八關後，請填寫班級、座號與姓名，再按「繳交成績」將本次結果送給老師。重新整理後本頁成績仍會重置。": ["After all eight levels, select Submit score in the results, enter your class and seat number, and send the result to your teacher. Reloading still resets the scores on this page.", "8ステップ終了後、学習結果の「成績を提出」を押し、クラスと出席番号を入力して先生へ送信できます。再読み込みすると、このページの成績はリセットされます。"],
-      "計分方式與使用提醒": ["Scoring and reminders", "採点方法と注意事項"],
-      "操作每關 100 分：指定順序錯誤扣 20 分、違反本關操作條件扣 20 分、觸發碰撞保護扣 20 分，各類每關最多扣一次。未完成操作不能提交。預測、速度、滑桿次數、正常探索與重試不扣分。概念題依選對比例給分，誤選扣同等分數，最低 0 分。兩項總分分別取八關平均。重新整理會清除本次成績。": ["Operations start at 100 per level. Wrong order, breaking a fixed condition and triggering collision protection each cost 20 points, at most once per category per level. Complete the operation before submitting. Predictions, speed, slider use, normal exploration and retries do not cost points. Concept scores credit correct choices and subtract the same amount for incorrect choices, with a minimum of 0. Each overall score is the average of eight levels. Reloading clears scores.", "操作は各ステップ100点から開始。順序違反、指定条件違反、衝突保護の作動は各20点減点で、各種類につき1回までです。操作を完了するまで解答は提出できません。予測・速さ・スライダーの操作回数・通常の探索・再試行では減点しません。概念問題は正しい選択の割合で加点し、誤選択は同じ配点で減点します（最低0点）。総合点はそれぞれ8ステップの平均です。再読み込みで成績は消去されます。"],
-      "1. 先預測（不計分）": ["1. Predict (not scored)", "1. 予測する（採点なし）"],
-      "2. 操作與觀察": ["2. Operate and observe", "2. 操作して観察する"],
-      "3. 根據觀察解釋": ["3. Explain your observations", "3. 観察をもとに説明する"],
-      "確認預測，開始操作": ["Confirm prediction and begin", "予測を確定して操作を開始"],
-      "綠色提示指出下一步要操作的位置。完成後，請比較視野變化再作答。": ["Green highlights show the next control to use. Compare the view before answering.", "緑色の表示が次に操作する場所を示します。視野の変化を比べてから解答しましょう。"],
-      "提交答案": ["Submit answer", "解答を提出"],
-      "已提交答案": ["Answer submitted", "提出済み"],
-      "下一步": ["Next", "次へ"],
-      "查看學習結果": ["View results", "学習結果を見る"],
-      "操作技能": ["Operation skills", "操作技能"],
-      "概念理解": ["Concept understanding", "概念理解"],
-      "學習成果": ["Learning results", "学習結果"],
-      "學習診斷與觀念修正建議": ["Learning diagnosis and concept feedback", "学習診断と考え方の見直し"],
-      "重新挑戰": ["Start a new challenge", "もう一度挑戦"],
-      "繳交成績": ["Submit score", "成績を提出"],
-      "成績繳交": ["Submit learning results", "成績提出"],
-      "班級": ["Class", "クラス"],
-      "座號": ["Seat number", "出席番号"],
-      "姓名": ["Name", "氏名"],
-      "取消": ["Cancel", "キャンセル"],
-      "送出": ["Submit", "送信"],
-      "完成 8 關後，輸入班級與座號即可將本次學習成果送至老師的試算表。": ["After completing all 8 levels, enter your class and seat number to send your results to the teacher.", "8ステップ完了後、クラスと出席番号を入力して学習結果を先生へ送信できます。"],
-      "回到關卡": ["Return to levels", "ステップに戻る"],
-      "複習需加強關卡": ["Review weaker levels", "苦手なステップを復習"],
-      "明亮": ["Bright", "明るい"],
-      "中等": ["Moderate", "中程度"],
-      "偏暗": ["Dim", "やや暗い"],
-      "清楚": ["Clear", "鮮明"],
-      "略模糊": ["Slightly blurred", "ややぼけている"],
-      "模糊": ["Blurred", "ぼけている"],
-      "嚴重失焦": ["Very blurred", "大きくピンぼけ"],
-      "中央": ["Center", "中央"],
-      "左": ["Left", "左"], "右": ["Right", "右"], "上": ["Up", "上"], "下": ["Down", "下"],
-      "左上": ["Upper left", "左上"], "右上": ["Upper right", "右上"], "左下": ["Lower left", "左下"], "右下": ["Lower right", "右下"],
-      "玻片：{position}｜清晰度：{focus} {score}%｜亮度：{light}": ["Slide: {position} | Focus: {focus} {score}% | Light: {light}", "位置：{position}｜鮮明度：{focus} {score}%｜明るさ：{light}"],
-      "物鏡 {objective}x × 目鏡 {ocular}x = {total}倍": ["Objective {objective}x × eyepiece {ocular}x = {total}x", "対物 {objective}x × 接眼 {ocular}x = {total}倍"],
-      "{objective}x × {ocular}x = {total} 倍": ["{objective}x × {ocular}x = {total}x", "{objective}x × {ocular}x = {total} 倍"],
-      "本關請點選發亮的{parts}，展開調整選項。": ["Select the highlighted {parts} to show its adjustments.", "光っている{parts}を選んで調整欄を開いてください。"],
-      "第 {level} / {total} 關｜已完成 {completed} 關": ["Level {level} / {total} | {completed} completed", "ステップ {level} / {total}｜{completed} 完了"],
-      "第 {level} 關：{title}{status}": ["Level {level}: {title}{status}", "ステップ {level}：{title}{status}"],
-      "，已完成，操作 {operation} 分，概念 {concept} 分": [", completed, operation {operation}, concepts {concept}", "、完了、操作 {operation} 点、概念 {concept} 点"],
-      "，未完成": [", incomplete", "、未完了"],
-      "操作技能 {operation} 分｜概念理解 {concept} 分": ["Operation skills: {operation} | Concepts: {concept}", "操作技能 {operation} 点｜概念理解 {concept} 点"],
-      "你選對的項目：": ["Correct choices:", "正しく選んだ項目："],
-      "漏選的正確項目：": ["Missed correct choices:", "選び忘れた正しい項目："],
-      "誤選的項目：": ["Incorrect choices:", "誤って選んだ項目："],
-      "觀念整理：": ["Key concepts:", "考え方の整理："],
-      "無": ["None", "なし"],
-      "任務：": ["Task: ", "課題："],
-      "複選題：": ["Select all correct statements: ", "正しいものをすべて選びましょう："],
-      "整體觀念掌握優良": ["Excellent concept understanding", "概念をよく理解できています"],
-      "能正確連結顯微鏡構造、操作方式與視野變化。": ["You connect microscope parts, operations and changes in the view correctly.", "顕微鏡の各部・操作方法・視野の変化を正しく結び付けられています。"],
-      "整體表現良好": ["Good overall understanding", "全体的によくできています"],
-      "主要概念已建立，少數操作原理需要再確認。": ["You understand the main concepts; review a few operating principles.", "主な概念は理解できています。一部の操作原理を確認しましょう。"],
-      "基礎觀念已建立": ["Foundations established", "基本的な概念が身に付いています"],
-      "建議依下方診斷複習得分較低的關卡，再重新挑戰。": ["Use the diagnosis below to review lower-scoring levels, then try again.", "下の診断を参考に点数の低いステップを復習し、再挑戦しましょう。"],
-      "建議重新練習核心概念": ["Review the core concepts", "重要な概念を復習しましょう"],
-      "先從得分最低的關卡開始複習，配合操作對照下方觀念整理。": ["Start with your lowest-scoring level and compare your observations with the concept feedback.", "最も点数の低いステップから復習し、操作と下の解説を照らし合わせましょう。"],
-      "回報老師：已完成 8／8 關｜操作技能 {operation}／100｜概念理解 {concept}／100": ["Report to teacher: 8/8 completed | Operation skills {operation}/100 | Concepts {concept}/100", "先生への報告：8/8 完了｜操作技能 {operation}/100｜概念理解 {concept}/100"],
-      "已完成全部 {total} 關，其中 {perfect} 關概念題全對。{summary} 兩項分數分別取八關平均。可按「繳交成績」將本次結果送給老師。": ["All {total} levels completed; {perfect} perfect concept scores. {summary} Each score averages eight levels. Select Submit score to send this result to your teacher.", "全{total}ステップを完了し、{perfect}ステップの概念問題が全問正解でした。{summary} 2つの点数はそれぞれ8ステップの平均です。「成績を提出」で先生へ送信できます。"],
-      "觀念修正：{explanation}": ["Concept review: {explanation}", "考え方の見直し：{explanation}"],
-      "本關觀念掌握完整。": ["You understand this level's concepts fully.", "このステップの概念を十分に理解できています。"],
-      "漏選的正確觀念：": ["Missed correct concepts: ", "選び忘れた正しい考え方："],
-      "誤選的敘述：": ["Incorrect statements selected: ", "誤って選んだ説明："],
-      "第 {level} 關｜{title}": ["Level {level} | {title}", "ステップ {level}｜{title}"],
-      "操作 {operation}｜概念 {concept}": ["Skills {operation} | Concepts {concept}", "操作 {operation}｜概念 {concept}"],
-      "已依指定條件完成操作。": ["Completed the operation under the required conditions.", "指定された条件で操作を完了しました。"],
-      "（已完成）": [" (done)", "（完了）"],
-      "已完成指定操作，請比較觀察結果再作答。": ["Operation complete. Compare your observations before answering.", "操作が完了しました。観察結果を比べてから解答しましょう。"],
-      "請依序完成上方步驟，再前往作答。": ["Complete the steps above in order before answering.", "上の手順を順番に完了してから解答に進みましょう。"],
-      "請先完成指定操作。": ["Complete the required operation first.", "先に指定された操作を完了してください。"],
-      "觀察完成，前往作答": ["Observation complete; answer", "観察を終えて解答へ"],
-      "完成指定操作後前往作答": ["Complete the operation to answer", "操作を完了すると解答へ進めます"],
-      "操作前 → 完成時：總倍率 {totalBefore} → {totalAfter} 倍；清晰度 {focusBefore}% → {focusAfter}%；亮度 {lightBefore}% → {lightAfter}%。": ["Before → after: magnification {totalBefore}x → {totalAfter}x; clarity {focusBefore}% → {focusAfter}%; brightness {lightBefore}% → {lightAfter}%.", "操作前 → 完了時：総合倍率 {totalBefore} → {totalAfter} 倍、鮮明度 {focusBefore}% → {focusAfter}%、明るさ {lightBefore}% → {lightAfter}%。"],
-      "曾將亮度降至 {brightness}%。": ["Brightness was first reduced to {brightness}%.", "途中で明るさを{brightness}%まで下げました。"],
-      "玻片往右，請對照視野影像的方向。": ["The slide moved right; compare the direction of the image.", "スライドは右へ動きました。像の動く方向と比べましょう。"],
-      "請依實際觀察回答下方複選題。": ["Answer the multiple-select question based on your observations.", "観察をもとに下の複数選択問題に答えましょう。"],
-      "預測：「{prediction}」（{status}，不計分）。觀察後{outcome}。": ["Prediction: “{prediction}” ({status}, not scored). After observing: {outcome}.", "予測：「{prediction}」（{status}、採点なし）。観察後：{outcome}。"],
-      "正確": ["correct", "正解"], "需修正": ["needs revision", "見直しが必要"],
-      "本關作答全對": ["all choices correct", "すべて正しく解答できました"],
-      "仍有漏選或誤選，請對照觀念整理": ["some missed or incorrect choices remain; review the key concepts", "選び忘れや誤選択があります。考え方の整理を確認しましょう"],
-      "尚未完成操作。": ["Operation not complete.", "操作がまだ完了していません。"],
-      "請先依照任務調整指定構造，再提交答案。": ["Adjust the required part as instructed before submitting.", "課題に従って指定の部分を調整してから提出してください。"],
-      "請至少選擇一個答案。": ["Select at least one answer.", "少なくとも1つ選んでください。"],
-      "尚未完成全部關卡，無法繳交成績。": ["Complete all levels before submitting your score.", "すべてのステップを完了してから成績を提出してください。"],
-      "請輸入班級與座號。": ["Enter your class and seat number.", "クラスと出席番号を入力してください。"],
-      "請輸入正確座號。": ["Enter a valid seat number.", "正しい出席番号を入力してください。"],
-      "送出中…": ["Submitting…", "送信中…"],
-      "成績已送出。若再次繳交，老師端會以最後一次資料為準。": ["Score submitted. If you submit again, the teacher view will use your latest submission.", "成績を送信しました。再提出した場合、先生の画面では最新の提出が使用されます。"],
-      "送出失敗，請檢查網路後再試一次。": ["Submission failed. Check your connection and try again.", "送信に失敗しました。ネットワークを確認してもう一度お試しください。"],
-      "已完成 8／8 關｜操作技能 {operation}／100｜概念理解 {concept}／100": ["8/8 completed | Operation skills {operation}/100 | Concepts {concept}/100", "8/8 完了｜操作技能 {operation}/100｜概念理解 {concept}/100"],
-      "已停止向上：物鏡可能碰撞玻片。請將粗調往正值退回，並使用細調對焦。（教學模擬界線）": ["Upward motion stopped: the objective could hit the slide. Move coarse focus toward positive values to retreat, then use fine focus. (Teaching simulation boundary)", "上昇を停止：対物レンズがスライドに接触するおそれがあります。粗動を正の値へ戻し、微動でピントを合わせてください。（学習用の保護境界）"],
-      "物鏡接近玻片，請勿繼續向上粗調；可反向退回或使用細調。（教學模擬界線）": ["The objective is close to the slide. Stop raising the stage with coarse focus; retreat or use fine focus. (Teaching simulation boundary)", "対物レンズがスライドに近づいています。粗動でさらに上げず、逆方向に戻すか微動を使ってください。（学習用の保護境界）"],
-      "操作順序需要修正：依畫面步驟先完成前置操作，再進行下一步。": ["Review the order: complete the prerequisite before the next step.", "操作順序を見直しましょう。画面の手順に従い、前の操作を完了してから次へ進んでください。"],
-      "曾改動本關要求固定的設定，或未依指定調整方向操作。請對照任務要求。": ["A required fixed setting or adjustment direction was not followed. Review the task.", "固定すべき設定を変えたか、指定された調整方向に従っていませんでした。課題を確認しましょう。"],
-      "曾觸發高倍碰撞保護：避免讓載物台過度接近物鏡，退回後使用細調。": ["High-power collision protection was triggered. Keep the stage away from the objective; retreat and use fine focus.", "高倍率で衝突保護が作動しました。ステージを対物レンズに近づけすぎず、戻してから微動を使いましょう。"],
-      "請先恢復任務指定的固定設定，再完成操作。也可以按「重試本關」。": ["Restore the fixed settings before proceeding, or select Retry this level.", "固定すべき設定を戻してから操作してください。「このステップをやり直す」も使えます。"],
-      "本關請往負值調整細調節輪，觀察影像變清楚。往正值會更偏離焦點。": ["Move fine focus toward negative values to sharpen the image. Positive values move farther from focus.", "微動ねじを負の値へ調整し、像が鮮明になる様子を観察しましょう。正の値は焦点から遠ざかります。"],
-      "已觀察低亮度；接著把光源提高至 65 以上。": ["Low brightness observed. Now increase the light to at least 65.", "暗い視野を観察しました。次は光源を65以上に上げましょう。"],
-      "尚未先降低光源。請先降至 30 以下，再提高至 65 以上。": ["First reduce the light to 30 or below, then raise it to at least 65.", "先に光源を30以下に下げ、その後65以上に上げてください。"],
-      "尚未依序完成低倍與置中。請回到 4x，把標本移到中心，再切換 40x；標本偏移時可能離開高倍視野。": ["Low power and centering were not completed in order. Return to 4x, center the specimen, then select 40x. An off-center specimen may leave the high-power view.", "低倍率での観察と中央合わせが順番どおりに完了していません。4xに戻し、標本を中央にしてから40xへ切り替えましょう。ずれた標本は高倍率の視野から外れることがあります。"],
-      "已選擇 4x。請移動玻片或按「中心」，確認標本置中。": ["4x selected. Move the slide or press Center to center the specimen.", "4xを選びました。スライドを動かすか「中央」を押し、標本を中央に合わせてください。"],
-      "已在低倍下置中。現在可以切換 40x。": ["Centered at low power. Now switch to 40x.", "低倍率で中央に合わせました。40xに切り替えましょう。"],
-      "繼續移動玻片，直到位置顯示「中心」。": ["Keep moving the slide until its position reads Center.", "位置が「中央」になるまでスライドを動かしましょう。"],
-      "目前為情境示範，不計入操作完成。請按「重試本關」恢復起始狀態，再親自完成步驟。": ["This is a demonstration and does not count as your operation. Select Retry this level to restore the starting state and do the steps yourself.", "現在は実演状態のため操作完了には数えません。「このステップをやり直す」で初期状態に戻し、自分で手順を実行してください。"],
-      "已恢復本關起始設定，請重新操作。": ["Starting settings restored. Try the operation again.", "このステップの初期設定に戻しました。もう一度操作してください。"],
+      "複式顯微鏡模擬｜學習模式版": ["Compound Microscope Simulator | Learning Mode", "複式顕微鏡シミュレーター｜学習モード", "Mô phỏng kính hiển vi quang học | Chế độ học tập"],
+      "複式顯微鏡模擬": ["Compound Microscope Simulator", "複式顕微鏡シミュレーター", "Mô phỏng kính hiển vi quang học"],
+      "語言": ["Language", "言語", "Ngôn ngữ"],
+      "視野": ["View", "視野", "Thị trường"],
+      "載物台": ["Stage", "ステージ", "Bàn kính"],
+      "複式顯微鏡": ["Compound Microscope", "複式顕微鏡", "Kính hiển vi quang học"],
+      "標本": ["Specimen", "標本", "Mẫu vật"],
+      "字母 e": ["Letter e", "文字 e", "Chữ e"],
+      "洋蔥表皮細胞（未染色）": ["Onion epidermis (unstained)", "タマネギ表皮細胞（未染色）", "Tế bào biểu bì vảy hành (chưa nhuộm)"],
+      "洋蔥表皮細胞（染色）": ["Onion epidermis (stained)", "タマネギ表皮細胞（染色）", "Tế bào biểu bì vảy hành (đã nhuộm)"],
+      "口腔上皮細胞（未染色）": ["Cheek epithelial cells (unstained)", "口腔上皮細胞（未染色）", "Tế bào niêm mạc miệng (chưa nhuộm)"],
+      "口腔上皮細胞（染色）": ["Cheek epithelial cells (stained)", "口腔上皮細胞（染色）", "Tế bào niêm mạc miệng (đã nhuộm)"],
+      "洋蔥表皮細胞（亞甲藍染色）": ["Onion epidermis (methylene blue)", "タマネギ表皮細胞（メチレンブルー染色）", "Tế bào biểu bì vảy hành (nhuộm xanh methylene)"],
+      "口腔上皮細胞（亞甲藍染色）": ["Cheek epithelial cells (methylene blue)", "口腔上皮細胞（メチレンブルー染色）", "Tế bào niêm mạc miệng (nhuộm xanh methylene)"],
+      "中心": ["Center", "中央", "Giữa"],
+      "拖曳玻片並調整顯微鏡，觀察視野中的成像變化。": ["Drag the slide and adjust the microscope to observe changes in the image.", "スライドを動かして顕微鏡を調整し、像の変化を観察しましょう。", "Kéo tiêu bản và điều chỉnh kính hiển vi để quan sát sự thay đổi của ảnh."],
+      "中央圓形與十字線可作為玻片對位參考。": ["Use the center circle and cross as slide alignment guides.", "中央の円と十字線をスライドの位置合わせの目安にできます。", "Dùng vòng tròn và dấu chữ thập ở giữa để căn chỉnh tiêu bản."],
+      "顯微鏡操作工作區": ["Microscope workspace", "顕微鏡操作エリア", "Khu vực thao tác kính hiển vi"],
+      "可拖曳玻片": ["Draggable slide", "ドラッグできるスライド", "Tiêu bản có thể kéo"],
+      "玻片方向控制": ["Slide movement controls", "スライドの移動操作", "Nút di chuyển tiêu bản"],
+      "玻片向上移動": ["Move slide up", "スライドを上へ移動", "Di chuyển tiêu bản lên trên"],
+      "玻片向下移動": ["Move slide down", "スライドを下へ移動", "Di chuyển tiêu bản xuống dưới"],
+      "玻片向左移動": ["Move slide left", "スライドを左へ移動", "Di chuyển tiêu bản sang trái"],
+      "玻片向右移動": ["Move slide right", "スライドを右へ移動", "Di chuyển tiêu bản sang phải"],
+      "顯微鏡示意圖": ["Interactive microscope diagram", "操作できる顕微鏡の模式図", "Sơ đồ kính hiển vi tương tác"],
+      "調整目鏡倍率": ["Adjust eyepiece magnification", "接眼レンズの倍率を調整", "Điều chỉnh độ phóng đại thị kính"],
+      "調整物鏡倍率": ["Adjust objective magnification", "対物レンズの倍率を調整", "Điều chỉnh độ phóng đại vật kính"],
+      "調整粗細調節輪": ["Adjust coarse and fine focus", "粗動・微動ねじを調整", "Điều chỉnh ốc to và ốc nhỏ"],
+      "調整光源": ["Adjust illumination", "光源を調整", "Điều chỉnh nguồn sáng"],
+      "構造調整區": ["Adjustments", "調整エリア", "Khu vực điều chỉnh"],
+      "點選顯微鏡構造後可進行調整": ["Select a microscope part to adjust it.", "顕微鏡の各部を選ぶと調整できます。", "Chọn một bộ phận của kính hiển vi để điều chỉnh."],
+      "物鏡": ["Objective", "対物レンズ", "Vật kính"],
+      "目鏡": ["Eyepiece", "接眼レンズ", "Thị kính"],
+      "調節輪": ["focus knobs", "調節ねじ", "ốc điều chỉnh"],
+      "粗調節輪": ["Coarse focus", "粗動ねじ", "Ốc to (sơ cấp)"],
+      "細調節輪": ["Fine focus", "微動ねじ", "Ốc nhỏ (vi cấp)"],
+      "光源": ["Light", "光源", "Nguồn sáng"],
+      "物鏡倍率": ["Objective magnification", "対物レンズの倍率", "Độ phóng đại vật kính"],
+      "目鏡倍率": ["Eyepiece magnification", "接眼レンズの倍率", "Độ phóng đại thị kính"],
+      "4x 掃描": ["4x Scanning", "4x 探索", "4x Tìm mẫu"],
+      "10x 低倍": ["10x Low power", "10x 低倍率", "10x Bội giác nhỏ"],
+      "40x 高倍": ["40x High power", "40x 高倍率", "40x Bội giác lớn"],
+      "顯示目鏡指針": ["Eyepiece pointer", "接眼指針を表示", "Hiện kim chỉ thị kính"],
+      "顯示視野十字線": ["View crosshair", "視野の十字線を表示", "Hiện chữ thập thị trường"],
+      "顯示載物台對位線": ["Stage alignment guides", "ステージの位置合わせ線を表示", "Hiện đường căn chỉnh bàn kính"],
+      "學習模式": ["Learning mode", "学習モード", "Chế độ học tập"],
+      "開啟學習模式": ["Start learning", "学習を開始", "Bắt đầu học"],
+      "關閉學習模式": ["Close learning", "学習を閉じる", "Đóng chế độ học"],
+      "離開學習模式": ["Exit learning", "学習を終了", "Thoát chế độ học"],
+      "進入": ["Start", "開始", "Bắt đầu"],
+      "學習任務": ["Learning task", "学習課題", "Nhiệm vụ học tập"],
+      "學習關卡": ["Learning levels", "学習ステップ", "Các bài học"],
+      "重新開始模擬": ["Reset simulation", "シミュレーションをリセット", "Đặt lại mô phỏng"],
+      "重試本關": ["Retry this level", "このステップをやり直す", "Làm lại bài này"],
+      "任務模擬：": ["Scenarios:", "場面設定：", "Tình huống:"],
+      "低倍找標本": ["Find at low power", "低倍率で標本を探す", "Tìm mẫu ở bội giác nhỏ"],
+      "高倍觀察": ["High-power view", "高倍率で観察", "Quan sát bội giác lớn"],
+      "太暗": ["Too dark", "暗すぎる", "Quá tối"],
+      "失焦": ["Out of focus", "ピンぼけ", "Mất nét"],
+      "操作說明": ["How to use", "操作ガイド", "Hướng dẫn sử dụng"],
+      "拖曳玻片或使用方向按鈕移動標本；點選目鏡、物鏡、調節輪或光源，可展開調整選項，再點一次收合。鍵盤可用 Tab 選取構造、Enter 展開，方向鍵調整滑桿。": ["Drag the slide or use the arrow buttons. Select the eyepiece, objective, focus knobs or light to show adjustments; select it again to close them. Use Tab to focus a part, Enter to open it and arrow keys to adjust sliders.", "スライドをドラッグするか矢印ボタンで標本を動かします。接眼レンズ・対物レンズ・調節ねじ・光源を選ぶと調整欄が開き、もう一度選ぶと閉じます。Tabで各部を選択し、Enterで開き、矢印キーでスライダーを調整できます。", "Kéo tiêu bản hoặc dùng các nút mũi tên để di chuyển mẫu. Chọn thị kính, vật kính, ốc điều chỉnh hoặc nguồn sáng để mở phần điều chỉnh; chọn lại lần nữa để đóng. Dùng phím Tab để chọn bộ phận, Enter để mở và phím mũi tên để chỉnh thanh trượt."],
+      "學習流程：預測 → 操作與觀察 → 作答 → 診斷。八關可自由切換；提交答案後才能選擇下一步。情境按鈕用於示範，學習中使用後請按「重試本關」再親自完成。": ["Learning: predict → operate and observe → answer → diagnosis. Jump freely between eight levels. Submit an answer to unlock Next. Scenarios are demonstrations, not evidence of your work; select Retry this level afterward to complete the steps yourself.", "学習の流れ：予測 → 操作と観察 → 解答 → 診断。8ステップは自由に切り替えられます。解答を提出すると次へ進めます。場面設定は実演用です。学習中に使った場合は「このステップをやり直す」を押し、自分で操作してください。", "Quy trình học: dự đoán → thao tác và quan sát → trả lời → đánh giá. Có thể chuyển tự do giữa tám bài; nộp câu trả lời mới được sang bài tiếp. Các nút tình huống chỉ để minh họa; nếu đã dùng trong lúc học, hãy bấm «Làm lại bài này» rồi tự thực hiện."],
+      "40x 下若載物台過度靠近物鏡，系統會提醒並停止繼續靠近；反向調整仍可退回。這是教學模擬保護界線，不代表實際儀器的安全距離。": ["At 40x, moving the stage too close to the objective triggers a warning and stops further approach. You can still move it away. This teaching boundary is not a safe-distance specification for real equipment.", "40xでステージが対物レンズに近づきすぎると警告し、それ以上の接近を止めます。逆方向には戻せます。これは学習用の保護境界であり、実機の安全距離を示すものではありません。", "Ở 40x, nếu bàn kính tiến quá gần vật kính, hệ thống sẽ cảnh báo và dừng lại; bạn vẫn có thể chỉnh ngược để lùi ra. Đây là giới hạn bảo vệ trong mô phỏng, không phải khoảng cách an toàn của thiết bị thật."],
+      "完成八關後，請填寫班級、座號與姓名，再按「繳交成績」將本次結果送給老師。重新整理後本頁成績仍會重置。": ["After all eight levels, select Submit score in the results, enter your class and seat number, and send the result to your teacher. Reloading still resets the scores on this page.", "8ステップ終了後、学習結果の「成績を提出」を押し、クラスと出席番号を入力して先生へ送信できます。再読み込みすると、このページの成績はリセットされます。", "Sau khi hoàn thành tám bài, hãy điền lớp, số thứ tự và họ tên, rồi bấm «Nộp điểm» để gửi kết quả cho giáo viên. Tải lại trang sẽ xóa điểm."],
+      "計分方式與使用提醒": ["Scoring and reminders", "採点方法と注意事項", "Cách tính điểm và lưu ý"],
+      "操作每關 100 分：指定順序錯誤扣 20 分、違反本關操作條件扣 20 分、觸發碰撞保護扣 20 分，各類每關最多扣一次。未完成操作不能提交。預測、速度、滑桿次數、正常探索與重試不扣分。概念題依選對比例給分，誤選扣同等分數，最低 0 分。兩項總分分別取八關平均。重新整理會清除本次成績。": ["Operations start at 100 per level. Wrong order, breaking a fixed condition and triggering collision protection each cost 20 points, at most once per category per level. Complete the operation before submitting. Predictions, speed, slider use, normal exploration and retries do not cost points. Concept scores credit correct choices and subtract the same amount for incorrect choices, with a minimum of 0. Each overall score is the average of eight levels. Reloading clears scores.", "操作は各ステップ100点から開始。順序違反、指定条件違反、衝突保護の作動は各20点減点で、各種類につき1回までです。操作を完了するまで解答は提出できません。予測・速さ・スライダーの操作回数・通常の探索・再試行では減点しません。概念問題は正しい選択の割合で加点し、誤選択は同じ配点で減点します（最低0点）。総合点はそれぞれ8ステップの平均です。再読み込みで成績は消去されます。", "Điểm thao tác mỗi bài bắt đầu từ 100: sai thứ tự trừ 20, vi phạm điều kiện của bài trừ 20, kích hoạt bảo vệ va chạm trừ 20; mỗi loại chỉ trừ một lần mỗi bài. Phải hoàn thành thao tác mới được nộp. Dự đoán, tốc độ, số lần kéo thanh trượt, khám phá bình thường và làm lại không bị trừ điểm. Câu hỏi khái niệm tính theo tỉ lệ chọn đúng, chọn sai bị trừ tương ứng, thấp nhất 0 điểm. Mỗi điểm tổng là trung bình của tám bài. Tải lại trang sẽ xóa điểm."],
+      "1. 先預測（不計分）": ["1. Predict (not scored)", "1. 予測する（採点なし）", "1. Dự đoán (không tính điểm)"],
+      "2. 操作與觀察": ["2. Operate and observe", "2. 操作して観察する", "2. Thao tác và quan sát"],
+      "3. 根據觀察解釋": ["3. Explain your observations", "3. 観察をもとに説明する", "3. Giải thích dựa trên quan sát"],
+      "確認預測，開始操作": ["Confirm prediction and begin", "予測を確定して操作を開始", "Xác nhận dự đoán, bắt đầu thao tác"],
+      "綠色提示指出下一步要操作的位置。完成後，請比較視野變化再作答。": ["Green highlights show the next control to use. Compare the view before answering.", "緑色の表示が次に操作する場所を示します。視野の変化を比べてから解答しましょう。", "Phần sáng màu xanh lá chỉ vị trí cần thao tác tiếp theo. Sau khi xong, hãy so sánh sự thay đổi của thị trường rồi mới trả lời."],
+      "提交答案": ["Submit answer", "解答を提出", "Nộp câu trả lời"],
+      "已提交答案": ["Answer submitted", "提出済み", "Đã nộp câu trả lời"],
+      "下一步": ["Next", "次へ", "Tiếp theo"],
+      "查看學習結果": ["View results", "学習結果を見る", "Xem kết quả"],
+      "操作技能": ["Operation skills", "操作技能", "Kỹ năng thao tác"],
+      "概念理解": ["Concept understanding", "概念理解", "Hiểu khái niệm"],
+      "學習成果": ["Learning results", "学習結果", "Kết quả học tập"],
+      "學習診斷與觀念修正建議": ["Learning diagnosis and concept feedback", "学習診断と考え方の見直し", "Đánh giá và góp ý sửa khái niệm"],
+      "重新挑戰": ["Start a new challenge", "もう一度挑戦", "Thử thách lại"],
+      "繳交成績": ["Submit score", "成績を提出", "Nộp điểm"],
+      "成績繳交": ["Submit learning results", "成績提出", "Nộp điểm"],
+      "班級": ["Class", "クラス", "Lớp"],
+      "座號": ["Seat number", "出席番号", "Số thứ tự"],
+      "姓名": ["Name", "氏名", "Họ tên"],
+      "取消": ["Cancel", "キャンセル", "Hủy"],
+      "送出": ["Submit", "送信", "Gửi"],
+      "完成 8 關後，輸入班級與座號即可將本次學習成果送至老師的試算表。": ["After completing all 8 levels, enter your class and seat number to send your results to the teacher.", "8ステップ完了後、クラスと出席番号を入力して学習結果を先生へ送信できます。", "Sau khi hoàn thành 8 bài, nhập lớp và số thứ tự để gửi kết quả cho giáo viên."],
+      "回到關卡": ["Return to levels", "ステップに戻る", "Quay lại các bài"],
+      "複習需加強關卡": ["Review weaker levels", "苦手なステップを復習", "Ôn lại bài cần cải thiện"],
+      "明亮": ["Bright", "明るい", "Sáng"],
+      "中等": ["Moderate", "中程度", "Trung bình"],
+      "偏暗": ["Dim", "やや暗い", "Hơi tối"],
+      "清楚": ["Clear", "鮮明", "Rõ nét"],
+      "略模糊": ["Slightly blurred", "ややぼけている", "Hơi mờ"],
+      "模糊": ["Blurred", "ぼけている", "Mờ"],
+      "嚴重失焦": ["Very blurred", "大きくピンぼけ", "Rất mờ"],
+      "中央": ["Center", "中央", "Giữa"],
+      "左": ["Left", "左", "Trái"],
+      "右": ["Right", "右", "Phải"],
+      "上": ["Up", "上", "Trên"],
+      "下": ["Down", "下", "Dưới"],
+      "左上": ["Upper left", "左上", "Trên trái"],
+      "右上": ["Upper right", "右上", "Trên phải"],
+      "左下": ["Lower left", "左下", "Dưới trái"],
+      "右下": ["Lower right", "右下", "Dưới phải"],
+      "玻片：{position}｜清晰度：{focus} {score}%｜亮度：{light}": ["Slide: {position} | Focus: {focus} {score}% | Light: {light}", "位置：{position}｜鮮明度：{focus} {score}%｜明るさ：{light}", "Tiêu bản: {position} | Độ nét: {focus} {score}% | Độ sáng: {light}"],
+      "物鏡 {objective}x × 目鏡 {ocular}x = {total}倍": ["Objective {objective}x × eyepiece {ocular}x = {total}x", "対物 {objective}x × 接眼 {ocular}x = {total}倍", "Vật kính {objective}x × thị kính {ocular}x = {total} lần"],
+      "{objective}x × {ocular}x = {total} 倍": ["{objective}x × {ocular}x = {total}x", "{objective}x × {ocular}x = {total} 倍", "{objective}x × {ocular}x = {total} lần"],
+      "本關請點選發亮的{parts}，展開調整選項。": ["Select the highlighted {parts} to show its adjustments.", "光っている{parts}を選んで調整欄を開いてください。", "Hãy chọn {parts} đang sáng lên để mở phần điều chỉnh."],
+      "第 {level} / {total} 關｜已完成 {completed} 關": ["Level {level} / {total} | {completed} completed", "ステップ {level} / {total}｜{completed} 完了", "Bài {level} / {total} | Đã xong {completed} bài"],
+      "第 {level} 關：{title}{status}": ["Level {level}: {title}{status}", "ステップ {level}：{title}{status}", "Bài {level}: {title}{status}"],
+      "，已完成，操作 {operation} 分，概念 {concept} 分": [", completed, operation {operation}, concepts {concept}", "、完了、操作 {operation} 点、概念 {concept} 点", ", đã xong, thao tác {operation} điểm, khái niệm {concept} điểm"],
+      "，未完成": [", incomplete", "、未完了", ", chưa xong"],
+      "操作技能 {operation} 分｜概念理解 {concept} 分": ["Operation skills: {operation} | Concepts: {concept}", "操作技能 {operation} 点｜概念理解 {concept} 点", "Kỹ năng thao tác {operation} điểm | Hiểu khái niệm {concept} điểm"],
+      "你選對的項目：": ["Correct choices:", "正しく選んだ項目：", "Các ý bạn chọn đúng:"],
+      "漏選的正確項目：": ["Missed correct choices:", "選び忘れた正しい項目：", "Các ý đúng bị bỏ sót:"],
+      "誤選的項目：": ["Incorrect choices:", "誤って選んだ項目：", "Các ý chọn sai:"],
+      "觀念整理：": ["Key concepts:", "考え方の整理：", "Tóm tắt khái niệm:"],
+      "無": ["None", "なし", "Không có"],
+      "任務：": ["Task: ", "課題：", "Nhiệm vụ: "],
+      "複選題：": ["Select all correct statements: ", "正しいものをすべて選びましょう：", "Chọn tất cả các ý đúng: "],
+      "整體觀念掌握優良": ["Excellent concept understanding", "概念をよく理解できています", "Nắm vững khái niệm rất tốt"],
+      "能正確連結顯微鏡構造、操作方式與視野變化。": ["You connect microscope parts, operations and changes in the view correctly.", "顕微鏡の各部・操作方法・視野の変化を正しく結び付けられています。", "Bạn liên hệ đúng giữa cấu tạo kính hiển vi, cách thao tác và sự thay đổi của thị trường."],
+      "整體表現良好": ["Good overall understanding", "全体的によくできています", "Kết quả tốt"],
+      "主要概念已建立，少數操作原理需要再確認。": ["You understand the main concepts; review a few operating principles.", "主な概念は理解できています。一部の操作原理を確認しましょう。", "Bạn đã nắm các khái niệm chính; cần xem lại một vài nguyên tắc thao tác."],
+      "基礎觀念已建立": ["Foundations established", "基本的な概念が身に付いています", "Đã có nền tảng cơ bản"],
+      "建議依下方診斷複習得分較低的關卡，再重新挑戰。": ["Use the diagnosis below to review lower-scoring levels, then try again.", "下の診断を参考に点数の低いステップを復習し、再挑戦しましょう。", "Hãy dựa vào phần đánh giá bên dưới để ôn các bài điểm thấp, rồi thử lại."],
+      "建議重新練習核心概念": ["Review the core concepts", "重要な概念を復習しましょう", "Nên luyện lại các khái niệm cốt lõi"],
+      "先從得分最低的關卡開始複習，配合操作對照下方觀念整理。": ["Start with your lowest-scoring level and compare your observations with the concept feedback.", "最も点数の低いステップから復習し、操作と下の解説を照らし合わせましょう。", "Bắt đầu ôn từ bài có điểm thấp nhất, vừa thao tác vừa đối chiếu phần tóm tắt khái niệm bên dưới."],
+      "回報老師：已完成 8／8 關｜操作技能 {operation}／100｜概念理解 {concept}／100": ["Report to teacher: 8/8 completed | Operation skills {operation}/100 | Concepts {concept}/100", "先生への報告：8/8 完了｜操作技能 {operation}/100｜概念理解 {concept}/100", "Báo cáo giáo viên: hoàn thành 8/8 bài | Kỹ năng thao tác {operation}/100 | Hiểu khái niệm {concept}/100"],
+      "已完成全部 {total} 關，其中 {perfect} 關概念題全對。{summary} 兩項分數分別取八關平均。可按「繳交成績」將本次結果送給老師。": ["All {total} levels completed; {perfect} perfect concept scores. {summary} Each score averages eight levels. Select Submit score to send this result to your teacher.", "全{total}ステップを完了し、{perfect}ステップの概念問題が全問正解でした。{summary} 2つの点数はそれぞれ8ステップの平均です。「成績を提出」で先生へ送信できます。", "Đã hoàn thành tất cả {total} bài, trong đó {perfect} bài trả lời đúng hết phần khái niệm. {summary} Mỗi điểm là trung bình của tám bài. Bấm «Nộp điểm» để gửi kết quả cho giáo viên."],
+      "觀念修正：{explanation}": ["Concept review: {explanation}", "考え方の見直し：{explanation}", "Sửa khái niệm: {explanation}"],
+      "本關觀念掌握完整。": ["You understand this level's concepts fully.", "このステップの概念を十分に理解できています。", "Bạn đã nắm vững khái niệm của bài này."],
+      "漏選的正確觀念：": ["Missed correct concepts: ", "選び忘れた正しい考え方：", "Khái niệm đúng bị bỏ sót: "],
+      "誤選的敘述：": ["Incorrect statements selected: ", "誤って選んだ説明：", "Nhận định chọn sai: "],
+      "第 {level} 關｜{title}": ["Level {level} | {title}", "ステップ {level}｜{title}", "Bài {level} | {title}"],
+      "操作 {operation}｜概念 {concept}": ["Skills {operation} | Concepts {concept}", "操作 {operation}｜概念 {concept}", "Thao tác {operation} | Khái niệm {concept}"],
+      "已依指定條件完成操作。": ["Completed the operation under the required conditions.", "指定された条件で操作を完了しました。", "Đã hoàn thành thao tác đúng điều kiện yêu cầu."],
+      "（已完成）": [" (done)", "（完了）", " (xong)"],
+      "已完成指定操作，請比較觀察結果再作答。": ["Operation complete. Compare your observations before answering.", "操作が完了しました。観察結果を比べてから解答しましょう。", "Đã hoàn thành thao tác. Hãy so sánh kết quả quan sát rồi trả lời."],
+      "請依序完成上方步驟，再前往作答。": ["Complete the steps above in order before answering.", "上の手順を順番に完了してから解答に進みましょう。", "Hãy làm lần lượt các bước ở trên rồi mới trả lời."],
+      "請先完成指定操作。": ["Complete the required operation first.", "先に指定された操作を完了してください。", "Hãy hoàn thành thao tác được yêu cầu trước."],
+      "觀察完成，前往作答": ["Observation complete; answer", "観察を終えて解答へ", "Đã quan sát xong, sang phần trả lời"],
+      "完成指定操作後前往作答": ["Complete the operation to answer", "操作を完了すると解答へ進めます", "Hoàn thành thao tác để sang phần trả lời"],
+      "操作前 → 完成時：總倍率 {totalBefore} → {totalAfter} 倍；清晰度 {focusBefore}% → {focusAfter}%；亮度 {lightBefore}% → {lightAfter}%。": ["Before → after: magnification {totalBefore}x → {totalAfter}x; clarity {focusBefore}% → {focusAfter}%; brightness {lightBefore}% → {lightAfter}%.", "操作前 → 完了時：総合倍率 {totalBefore} → {totalAfter} 倍、鮮明度 {focusBefore}% → {focusAfter}%、明るさ {lightBefore}% → {lightAfter}%。", "Trước → sau: độ phóng đại {totalBefore} → {totalAfter} lần; độ nét {focusBefore}% → {focusAfter}%; độ sáng {lightBefore}% → {lightAfter}%."],
+      "曾將亮度降至 {brightness}%。": ["Brightness was first reduced to {brightness}%.", "途中で明るさを{brightness}%まで下げました。", "Đã giảm độ sáng xuống {brightness}%."],
+      "玻片往右，請對照視野影像的方向。": ["The slide moved right; compare the direction of the image.", "スライドは右へ動きました。像の動く方向と比べましょう。", "Tiêu bản đã di chuyển sang phải; hãy so sánh với hướng di chuyển của ảnh."],
+      "請依實際觀察回答下方複選題。": ["Answer the multiple-select question based on your observations.", "観察をもとに下の複数選択問題に答えましょう。", "Hãy trả lời câu hỏi nhiều lựa chọn bên dưới dựa trên quan sát thực tế."],
+      "預測：「{prediction}」（{status}，不計分）。觀察後{outcome}。": ["Prediction: “{prediction}” ({status}, not scored). After observing: {outcome}.", "予測：「{prediction}」（{status}、採点なし）。観察後：{outcome}。", "Dự đoán: «{prediction}» ({status}, không tính điểm). Sau khi quan sát: {outcome}."],
+      "正確": ["correct", "正解", "đúng"],
+      "需修正": ["needs revision", "見直しが必要", "cần sửa"],
+      "本關作答全對": ["all choices correct", "すべて正しく解答できました", "trả lời đúng hết"],
+      "仍有漏選或誤選，請對照觀念整理": ["some missed or incorrect choices remain; review the key concepts", "選び忘れや誤選択があります。考え方の整理を確認しましょう", "vẫn còn ý bỏ sót hoặc chọn sai, hãy xem phần tóm tắt khái niệm"],
+      "尚未完成操作。": ["Operation not complete.", "操作がまだ完了していません。", "Chưa hoàn thành thao tác."],
+      "請先依照任務調整指定構造，再提交答案。": ["Adjust the required part as instructed before submitting.", "課題に従って指定の部分を調整してから提出してください。", "Hãy điều chỉnh bộ phận theo yêu cầu của nhiệm vụ trước khi nộp."],
+      "請至少選擇一個答案。": ["Select at least one answer.", "少なくとも1つ選んでください。", "Hãy chọn ít nhất một đáp án."],
+      "尚未完成全部關卡，無法繳交成績。": ["Complete all levels before submitting your score.", "すべてのステップを完了してから成績を提出してください。", "Chưa hoàn thành tất cả các bài nên chưa thể nộp điểm."],
+      "請輸入班級與座號。": ["Enter your class and seat number.", "クラスと出席番号を入力してください。", "Hãy nhập lớp và số thứ tự."],
+      "請輸入正確座號。": ["Enter a valid seat number.", "正しい出席番号を入力してください。", "Hãy nhập số thứ tự hợp lệ."],
+      "送出中…": ["Submitting…", "送信中…", "Đang gửi…"],
+      "成績已送出。若再次繳交，老師端會以最後一次資料為準。": ["Score submitted. If you submit again, the teacher view will use your latest submission.", "成績を送信しました。再提出した場合、先生の画面では最新の提出が使用されます。", "Đã gửi điểm. Nếu nộp lại, giáo viên sẽ dùng lần nộp cuối cùng."],
+      "送出失敗，請檢查網路後再試一次。": ["Submission failed. Check your connection and try again.", "送信に失敗しました。ネットワークを確認してもう一度お試しください。", "Gửi thất bại. Hãy kiểm tra mạng rồi thử lại."],
+      "已完成 8／8 關｜操作技能 {operation}／100｜概念理解 {concept}／100": ["8/8 completed | Operation skills {operation}/100 | Concepts {concept}/100", "8/8 完了｜操作技能 {operation}/100｜概念理解 {concept}/100", "Hoàn thành 8/8 bài | Kỹ năng thao tác {operation}/100 | Hiểu khái niệm {concept}/100"],
+      "已停止向上：物鏡可能碰撞玻片。請將粗調往正值退回，並使用細調對焦。（教學模擬界線）": ["Upward motion stopped: the objective could hit the slide. Move coarse focus toward positive values to retreat, then use fine focus. (Teaching simulation boundary)", "上昇を停止：対物レンズがスライドに接触するおそれがあります。粗動を正の値へ戻し、微動でピントを合わせてください。（学習用の保護境界）", "Đã dừng nâng lên: vật kính có thể chạm vào tiêu bản. Hãy chỉnh ốc to về phía giá trị dương để lùi ra, rồi dùng ốc nhỏ để lấy nét. (Giới hạn của mô phỏng)"],
+      "物鏡接近玻片，請勿繼續向上粗調；可反向退回或使用細調。（教學模擬界線）": ["The objective is close to the slide. Stop raising the stage with coarse focus; retreat or use fine focus. (Teaching simulation boundary)", "対物レンズがスライドに近づいています。粗動でさらに上げず、逆方向に戻すか微動を使ってください。（学習用の保護境界）", "Vật kính đang gần tiêu bản. Đừng tiếp tục nâng bàn kính bằng ốc to; hãy lùi lại hoặc dùng ốc nhỏ. (Giới hạn của mô phỏng)"],
+      "操作順序需要修正：依畫面步驟先完成前置操作，再進行下一步。": ["Review the order: complete the prerequisite before the next step.", "操作順序を見直しましょう。画面の手順に従い、前の操作を完了してから次へ進んでください。", "Cần sửa thứ tự thao tác: làm xong bước trước theo hướng dẫn rồi mới sang bước sau."],
+      "曾改動本關要求固定的設定，或未依指定調整方向操作。請對照任務要求。": ["A required fixed setting or adjustment direction was not followed. Review the task.", "固定すべき設定を変えたか、指定された調整方向に従っていませんでした。課題を確認しましょう。", "Đã thay đổi thiết lập cần giữ cố định, hoặc chưa chỉnh đúng hướng yêu cầu. Hãy xem lại nhiệm vụ."],
+      "曾觸發高倍碰撞保護：避免讓載物台過度接近物鏡，退回後使用細調。": ["High-power collision protection was triggered. Keep the stage away from the objective; retreat and use fine focus.", "高倍率で衝突保護が作動しました。ステージを対物レンズに近づけすぎず、戻してから微動を使いましょう。", "Đã kích hoạt bảo vệ va chạm ở bội giác lớn: tránh để bàn kính quá gần vật kính; hãy lùi ra rồi dùng ốc nhỏ."],
+      "請先恢復任務指定的固定設定，再完成操作。也可以按「重試本關」。": ["Restore the fixed settings before proceeding, or select Retry this level.", "固定すべき設定を戻してから操作してください。「このステップをやり直す」も使えます。", "Hãy khôi phục các thiết lập cố định của nhiệm vụ trước, hoặc bấm «Làm lại bài này»."],
+      "本關請往負值調整細調節輪，觀察影像變清楚。往正值會更偏離焦點。": ["Move fine focus toward negative values to sharpen the image. Positive values move farther from focus.", "微動ねじを負の値へ調整し、像が鮮明になる様子を観察しましょう。正の値は焦点から遠ざかります。", "Ở bài này hãy chỉnh ốc nhỏ về phía giá trị âm và quan sát ảnh rõ dần. Chỉnh về phía dương sẽ càng mất nét."],
+      "已觀察低亮度；接著把光源提高至 65 以上。": ["Low brightness observed. Now increase the light to at least 65.", "暗い視野を観察しました。次は光源を65以上に上げましょう。", "Đã quan sát khi tối; tiếp theo hãy tăng nguồn sáng lên 65 trở lên."],
+      "尚未先降低光源。請先降至 30 以下，再提高至 65 以上。": ["First reduce the light to 30 or below, then raise it to at least 65.", "先に光源を30以下に下げ、その後65以上に上げてください。", "Chưa giảm nguồn sáng trước. Hãy giảm xuống 30 trở xuống, rồi tăng lên 65 trở lên."],
+      "尚未依序完成低倍與置中。請回到 4x，把標本移到中心，再切換 40x；標本偏移時可能離開高倍視野。": ["Low power and centering were not completed in order. Return to 4x, center the specimen, then select 40x. An off-center specimen may leave the high-power view.", "低倍率での観察と中央合わせが順番どおりに完了していません。4xに戻し、標本を中央にしてから40xへ切り替えましょう。ずれた標本は高倍率の視野から外れることがあります。", "Chưa làm đúng thứ tự bội giác nhỏ và đưa mẫu vào giữa. Hãy quay lại 4x, đưa mẫu vào giữa, rồi chuyển sang 40x; mẫu bị lệch có thể ra khỏi thị trường ở bội giác lớn."],
+      "已選擇 4x。請移動玻片或按「中心」，確認標本置中。": ["4x selected. Move the slide or press Center to center the specimen.", "4xを選びました。スライドを動かすか「中央」を押し、標本を中央に合わせてください。", "Đã chọn 4x. Hãy di chuyển tiêu bản hoặc bấm «Giữa» để đưa mẫu vào giữa."],
+      "已在低倍下置中。現在可以切換 40x。": ["Centered at low power. Now switch to 40x.", "低倍率で中央に合わせました。40xに切り替えましょう。", "Đã đưa mẫu vào giữa ở bội giác nhỏ. Bây giờ có thể chuyển sang 40x."],
+      "繼續移動玻片，直到位置顯示「中心」。": ["Keep moving the slide until its position reads Center.", "位置が「中央」になるまでスライドを動かしましょう。", "Tiếp tục di chuyển tiêu bản cho đến khi vị trí hiện «Giữa»."],
+      "目前為情境示範，不計入操作完成。請按「重試本關」恢復起始狀態，再親自完成步驟。": ["This is a demonstration and does not count as your operation. Select Retry this level to restore the starting state and do the steps yourself.", "現在は実演状態のため操作完了には数えません。「このステップをやり直す」で初期状態に戻し、自分で手順を実行してください。", "Đây là tình huống minh họa, không tính là bạn đã thao tác. Hãy bấm «Làm lại bài này» để trở về trạng thái ban đầu rồi tự làm."],
+      "已恢復本關起始設定，請重新操作。": ["Starting settings restored. Try the operation again.", "このステップの初期設定に戻しました。もう一度操作してください。", "Đã khôi phục thiết lập ban đầu, hãy thao tác lại."],
+      "已完成全部 {total} 關，其中 {perfect} 關概念題全對。{summary} 兩項分數分別取八關平均。請填寫班級、座號與姓名後繳交成績。": ["All {total} levels completed; {perfect} perfect concept scores. {summary} Each score averages eight levels. Enter your class, seat number and name, then submit your score.", "全{total}ステップを完了し、{perfect}ステップの概念問題が全問正解でした。{summary} 2つの点数はそれぞれ8ステップの平均です。クラス・出席番号・氏名を入力して成績を提出しましょう。", "Đã hoàn thành tất cả {total} bài, trong đó {perfect} bài trả lời đúng hết phần khái niệm. {summary} Mỗi điểm là trung bình của tám bài. Hãy điền lớp, số thứ tự và họ tên rồi nộp điểm."],
+      "請輸入班級。": ["Enter your class.", "クラスを入力してください。", "Hãy nhập lớp."],
+      "請輸入姓名。": ["Enter your name.", "氏名を入力してください。", "Hãy nhập họ tên."],
+      "老師尚未設定成績回傳網址，請告知老師。": ["Your teacher has not set up score submission yet. Please tell your teacher.", "先生が成績の送信先をまだ設定していません。先生に知らせてください。", "Giáo viên chưa thiết lập địa chỉ nhận điểm. Hãy báo cho giáo viên."],
+      "完成 {done}／{total} 關後即可繳交。": ["Complete all levels to submit ({done}/{total} done).", "全ステップ完了後に提出できます（{done}/{total} 完了）。", "Hoàn thành tất cả các bài để nộp ({done}/{total} đã xong)."],
+      "已完成 {total}／{total} 關｜操作技能 {operation}／100｜概念理解 {concept}／100": ["{total}/{total} completed | Operation skills {operation}/100 | Concepts {concept}/100", "{total}/{total} 完了｜操作技能 {operation}/100｜概念理解 {concept}/100", "Hoàn thành {total}/{total} bài | Kỹ năng thao tác {operation}/100 | Hiểu khái niệm {concept}/100"],
+      "請輸入姓名": ["Enter your name", "氏名を入力", "Nhập họ tên"],
+      "例如：12": ["e.g. 12", "例：12", "Ví dụ: 12"],
     };
     function t(source, values = {}) {
       const entry = translations[source];
-      const message = currentLanguage === "zh-TW" ? source : entry?.[currentLanguage === "en" ? 0 : 1] ?? source;
+      const message = currentLanguage === "zh-TW" ? source : entry?.[{ en: 0, ja: 1, vi: 2 }[currentLanguage]] ?? source;
       return message.replace(/\{(\w+)\}/g, (match, key) => values[key] ?? match);
     }
 
@@ -2721,7 +2737,8 @@
     languageBar.setAttribute("aria-label", "語言");
     languageBar.innerHTML = `<button type="button" data-language="zh-TW" lang="zh-TW" aria-label="中文" aria-pressed="true">中</button>
       <button type="button" data-language="en" lang="en" aria-label="English" aria-pressed="false">英</button>
-      <button type="button" data-language="ja" lang="ja" aria-label="日本語" aria-pressed="false">日</button>`;
+      <button type="button" data-language="ja" lang="ja" aria-label="日本語" aria-pressed="false">日</button>
+      <button type="button" data-language="vi" lang="vi" aria-label="Tiếng Việt" aria-pressed="false">越</button>`;
     appRoot.prepend(languageBar);
     const mainGridEl = document.querySelector(".main-grid");
     const sidebarEl = document.querySelector(".sidebar");
@@ -3122,6 +3139,80 @@
           question: "染色の効果について、正しい説明はどれですか？",
           options: ["細胞の一部の構造を見やすくする。", "メチレンブルーは核の観察に役立つ。", "顕微鏡の倍率を直接上げる。", "構造と背景のコントラストを高める。", "染色すると細胞自体が大きくなる。"],
           explanation: "メチレンブルー染色はコントラストを高め、核などの構造を見やすくします。染色は倍率を変えず、細胞自体を大きくするものでもありません。"
+        }
+      },
+      vi: {
+        slide_reverse: {
+          title: "Di chuyển tiêu bản và ảnh ngược",
+          instruction: "Di chuyển tiêu bản sang phải một đoạn (có thể bấm mũi tên phải hai lần) và quan sát ảnh di chuyển theo hướng nào.",
+          prediction: { question: "Khi tiêu bản di chuyển sang phải, ảnh trong thị trường sẽ di chuyển về đâu?", options: ["Sang phải", "Sang trái", "Không di chuyển"] },
+          milestones: ["Di chuyển tiêu bản sang phải ít nhất hai lần bấm mũi tên"],
+          question: "Sau khi di chuyển tiêu bản, những nhận định nào đúng?",
+          options: ["Khi tiêu bản di chuyển sang phải, ảnh trong thị trường di chuyển sang trái.", "Đó là vì kính hiển vi quang học cho ảnh ngược cả trên–dưới lẫn trái–phải.", "Di chuyển tiêu bản làm thay đổi trực tiếp độ phóng đại.", "Muốn ảnh trong thị trường đi lên, có thể thử di chuyển tiêu bản xuống dưới.", "Ảnh luôn di chuyển cùng hướng với tiêu bản."],
+          explanation: "Ảnh trong kính hiển vi quang học bị ngược cả trên–dưới và trái–phải, nên khi di chuyển tiêu bản, ảnh sẽ di chuyển theo hướng ngược lại."
+        },
+        coarse_focus: {
+          title: "Ốc to (ốc sơ cấp)",
+          instruction: "Giữ vật kính 10x, thị kính 10x và ốc nhỏ ở 0. Chỉnh ốc to từ 65 về phía 0 cho đến khi độ nét đạt từ 90% trở lên. Quan sát bàn kính và ảnh thay đổi.",
+          prediction: { question: "Ở bội giác nhỏ, khi chỉnh ốc to về phía điểm lấy nét thì điều gì xảy ra?", options: ["Ảnh rõ dần", "Độ phóng đại thị kính tăng", "Tiêu bản to ra"] },
+          milestones: ["Dùng ốc to cải thiện độ nét đến 90%"],
+          question: "Những nhận định nào về ốc to là đúng?",
+          options: ["Bàn kính nâng lên hoặc hạ xuống khá rõ rệt.", "Ảnh có thể rõ hơn, cũng có thể mờ hơn.", "Ốc to chủ yếu dùng để nhanh chóng tiến gần điểm lấy nét.", "Ốc to làm thay đổi trực tiếp độ phóng đại thị kính.", "Khi quan sát ở bội giác lớn, không nên vặn ốc to nhiều."],
+          explanation: "Ốc to làm bàn kính lên xuống với biên độ lớn, dùng để nhanh chóng tiến gần điểm lấy nét. Ở bội giác lớn nên tránh vặn mạnh để vật kính không chạm vào tiêu bản."
+        },
+        fine_focus: {
+          title: "Ốc nhỏ (ốc vi cấp)",
+          instruction: "Giữ vật kính 40x, thị kính 10x, ốc to ở 22. Chỉnh ốc nhỏ từ 0 về giá trị âm đến -6 hoặc thấp hơn, rồi tiếp tục chỉnh nhẹ cho đến khi độ nét đạt từ 94% trở lên.",
+          prediction: { question: "Khi ảnh ở bội giác lớn hơi mờ, thao tác nào phù hợp nhất để chỉnh?", options: ["Tăng độ phóng đại thị kính", "Vặn ốc to thật nhiều", "Vặn ốc nhỏ một chút"] },
+          milestones: ["Chỉ dùng ốc nhỏ chỉnh về giá trị âm, độ nét đạt 94%"],
+          question: "Những nhận định nào về ốc nhỏ là đúng?",
+          options: ["Ốc nhỏ làm bàn kính di chuyển một khoảng nhỏ.", "Ốc nhỏ dùng để chỉnh tinh độ nét của ảnh.", "Ở bội giác lớn, ốc nhỏ thường phù hợp hơn ốc to.", "Ốc nhỏ làm thay đổi trực tiếp độ phóng đại vật kính.", "Khi chỉnh ốc nhỏ, ảnh có thể rõ hơn, cũng có thể mờ hơn."],
+          explanation: "Ốc nhỏ cũng dùng để lấy nét nhưng di chuyển với biên độ nhỏ, thích hợp để chỉnh tinh độ nét ở bội giác lớn."
+        },
+        objective_lens: {
+          title: "Độ phóng đại vật kính",
+          instruction: "Giữ thị kính 10x, chuyển vật kính từ 4x sang 40x, so sánh kích thước ảnh và phạm vi thị trường.",
+          prediction: { question: "Khi đổi vật kính từ 4x sang 40x, phạm vi thị trường sẽ thế nào?", options: ["Rộng hơn", "Hẹp hơn", "Không đổi"] },
+          milestones: ["Chuyển từ vật kính bội giác nhỏ sang 40x"],
+          question: "Khi tăng độ phóng đại vật kính, những nhận định nào đúng?",
+          options: ["Ảnh to hơn.", "Phạm vi thị trường hẹp hơn.", "Thị trường có thể tối hơn.", "Khoảng lấy nét hẹp lại nên dễ bị mờ hơn.", "Vật kính có độ phóng đại lớn thường dài hơn.", "Ảnh nhìn thấy sẽ trở thành ảnh thuận (không ngược)."],
+          explanation: "Khi tăng độ phóng đại vật kính, ảnh to hơn, thị trường hẹp và tối hơn, đồng thời dễ mất nét hơn. Về hình dạng, vật kính có độ phóng đại lớn thường dài hơn."
+        },
+        ocular_lens: {
+          title: "Độ phóng đại thị kính",
+          instruction: "Giữ vật kính 10x, đổi thị kính từ 5x sang 10x hoặc 15x và quan sát độ phóng đại thay đổi.",
+          prediction: { question: "Vật kính 10x kết hợp thị kính 15x thì độ phóng đại là bao nhiêu?", options: ["25 lần", "150 lần", "15 lần"] },
+          milestones: ["Đổi thị kính để tăng độ phóng đại"],
+          question: "Những nhận định nào về độ phóng đại thị kính là đúng?",
+          options: ["Độ phóng đại = độ phóng đại thị kính × độ phóng đại vật kính.", "Khi tăng độ phóng đại thị kính, độ phóng đại tăng.", "Chỉ đổi thị kính thì vị trí tiêu bản không bị thay đổi.", "Vật kính 10x với thị kính 15x cho độ phóng đại 150 lần.", "Khi tăng độ phóng đại thị kính, ảnh chắc chắn sẽ rõ hơn.", "Cả thị kính và vật kính đều ảnh hưởng đến độ phóng đại."],
+          explanation: "Độ phóng đại bằng độ phóng đại thị kính nhân với độ phóng đại vật kính, ví dụ 15 × 10 = 150 lần. Tăng độ phóng đại thị kính làm tăng độ phóng đại nhưng không đảm bảo ảnh rõ hơn."
+        },
+        light_source: {
+          title: "Cường độ nguồn sáng",
+          instruction: "Giữ vật kính 40x, thị kính 10x. Trước tiên giảm nguồn sáng từ 50 xuống 30 trở xuống, rồi tăng lên 65 trở lên, so sánh độ sáng hai lần.",
+          prediction: { question: "Chỉ giảm cường độ nguồn sáng thì thị trường sẽ thay đổi thế nào?", options: ["Độ phóng đại giảm", "Mẫu vật nhỏ lại", "Thị trường tối hơn"] },
+          milestones: ["Giảm nguồn sáng xuống 30 trở xuống trước", "Sau đó tăng lên 65 trở lên"],
+          question: "Những nhận định nào về cường độ nguồn sáng là đúng?",
+          options: ["Nguồn sáng ảnh hưởng đến độ sáng tối của thị trường.", "Nguồn sáng quá yếu thì thị trường sẽ tối.", "Khi quan sát ở bội giác lớn thường cần nhiều ánh sáng hơn.", "Điều chỉnh nguồn sáng làm thay đổi trực tiếp độ phóng đại.", "Nguồn sáng càng mạnh thì ảnh chắc chắn càng rõ."],
+          explanation: "Nguồn sáng chủ yếu ảnh hưởng đến độ sáng tối của thị trường. Ở bội giác lớn thị trường thường tối nên cần thêm sáng; nhưng nguồn sáng không quyết định độ phóng đại và cũng không phải yếu tố duy nhất của độ nét."
+        },
+        low_to_high: {
+          title: "Thứ tự quan sát từ bội giác nhỏ đến lớn",
+          instruction: "Trước tiên chọn 4x, sau đó di chuyển tiêu bản hoặc bấm «Giữa» để đưa mẫu vào giữa, cuối cùng chuyển sang 40x. Hãy tự thao tác đúng thứ tự này.",
+          prediction: { question: "Khi mẫu vật lệch khỏi giữa mà chuyển thẳng sang bội giác lớn thì có thể xảy ra điều gì?", options: ["Mẫu vật có thể ra khỏi thị trường", "Mẫu vật tự vào giữa", "Thị trường rộng hơn"] },
+          milestones: ["Chọn 4x trước để tìm mẫu", "Ở 4x, đưa tiêu bản vào giữa", "Giữ ở giữa và chuyển sang 40x"],
+          question: "Vì sao thường phải quan sát bằng bội giác nhỏ trước? Những nhận định nào đúng?",
+          options: ["Thị trường ở bội giác nhỏ rộng nên dễ tìm thấy mẫu vật.", "Đưa mẫu vào giữa thị trường trước rồi mới chuyển bội giác lớn sẽ dễ quan sát hơn.", "Thị trường ở bội giác lớn hẹp, nếu mẫu không ở giữa có thể không nhìn thấy.", "Sau khi chuyển sang bội giác lớn, thường cần chỉnh lại độ nét và nguồn sáng.", "Bội giác nhỏ luôn cho ảnh rõ hơn bội giác lớn."],
+          explanation: "Khi quan sát kính hiển vi thường dùng bội giác nhỏ trước, rồi mới đến bội giác lớn. Thị trường ở bội giác nhỏ rộng nên dễ tìm mẫu; chuyển sang bội giác lớn thị trường hẹp lại, thường cần chỉnh lại độ nét và nguồn sáng."
+        },
+        stain_effect: {
+          title: "Mẫu vật được nhuộm",
+          instruction: "Giữ vật kính 40x, thị kính 10x. Chuyển tế bào biểu bì vảy hành từ chưa nhuộm sang đã nhuộm, so sánh độ tương phản của nhân và đường viền tế bào.",
+          prediction: { question: "Nhuộm màu chủ yếu giúp chúng ta quan sát được điều gì?", options: ["Tế bào thực sự to ra", "Tăng độ tương phản giữa cấu trúc và nền", "Tăng độ phóng đại của kính hiển vi"] },
+          milestones: ["So sánh mẫu chưa nhuộm và đã nhuộm ở cùng độ phóng đại"],
+          question: "Những nhận định nào về tác dụng của việc nhuộm là đúng?",
+          options: ["Nhuộm màu giúp một số cấu trúc tế bào rõ hơn.", "Xanh methylene giúp quan sát nhân tế bào.", "Nhuộm màu làm tăng trực tiếp độ phóng đại của kính hiển vi.", "Nhuộm màu làm tăng độ tương phản giữa cấu trúc và nền.", "Sau khi nhuộm, kích thước thật của tế bào to ra."],
+          explanation: "Nhuộm xanh methylene làm tăng độ tương phản, giúp nhân và các cấu trúc khác dễ nhìn thấy hơn; việc nhuộm không thay đổi độ phóng đại và cũng không làm tế bào to ra."
         }
       }
     };
@@ -3915,12 +4006,12 @@
       const summary = getLearningScoreSummary();
 
       if (summary.completedSteps !== learningSteps.length) {
-        scoreSubmitPreview.textContent = `完成 ${summary.completedSteps}／${learningSteps.length} 關後即可繳交。`;
+        scoreSubmitPreview.textContent = t("完成 {done}／{total} 關後即可繳交。", { done: summary.completedSteps, total: learningSteps.length });
         return;
       }
 
-      scoreSubmitPreview.textContent =
-        `已完成 ${learningSteps.length}／${learningSteps.length} 關｜操作技能 ${summary.operationScoreAvg}／100｜概念理解 ${summary.conceptScoreAvg}／100`;
+      scoreSubmitPreview.textContent = t("已完成 {total}／{total} 關｜操作技能 {operation}／100｜概念理解 {concept}／100",
+        { total: learningSteps.length, operation: summary.operationScoreAvg, concept: summary.conceptScoreAvg });
     }
 
     function buildScoreSubmissionPayload(className, seatNo, studentName) {
@@ -3984,7 +4075,7 @@
 
     async function submitLearningScore() {
       if (getCompletedLearningCount() !== learningSteps.length) {
-        scoreSubmitStatus.textContent = "尚未完成全部關卡，無法繳交成績。";
+        scoreSubmitStatus.textContent = t("尚未完成全部關卡，無法繳交成績。");
         return;
       }
 
@@ -3993,20 +4084,25 @@
       const studentName = scoreNameInput.value.trim();
 
       if (!className) {
-        scoreSubmitStatus.textContent = "請輸入班級。";
+        scoreSubmitStatus.textContent = t("請輸入班級。");
         scoreClassInput.focus();
         return;
       }
 
       if (!Number.isInteger(seatNo) || seatNo < 1 || seatNo > 99) {
-        scoreSubmitStatus.textContent = "請輸入正確座號。";
+        scoreSubmitStatus.textContent = t("請輸入正確座號。");
         scoreSeatInput.focus();
         return;
       }
 
       if (!studentName) {
-        scoreSubmitStatus.textContent = "請輸入姓名。";
+        scoreSubmitStatus.textContent = t("請輸入姓名。");
         scoreNameInput.focus();
+        return;
+      }
+
+      if (!MICROSCOPE_SUBMIT_URL.startsWith("https://script.google.com/")) {
+        scoreSubmitStatus.textContent = t("老師尚未設定成績回傳網址，請告知老師。");
         return;
       }
 
@@ -4016,7 +4112,7 @@
       scoreClassInput.disabled = true;
       scoreSeatInput.disabled = true;
       scoreNameInput.disabled = true;
-      scoreSubmitStatus.textContent = "送出中…";
+      scoreSubmitStatus.textContent = t("送出中…");
 
       try {
         await fetch(MICROSCOPE_SUBMIT_URL, {
@@ -4028,10 +4124,10 @@
         });
 
         localStorage.setItem("microscopeClassName", className);
-        scoreSubmitStatus.textContent = "成績已送出。若再次繳交，老師端會以最後一次資料為準。";
+        scoreSubmitStatus.textContent = t("成績已送出。若再次繳交，老師端會以最後一次資料為準。");
       } catch (error) {
         console.error(error);
-        scoreSubmitStatus.textContent = "送出失敗，請檢查網路後再試一次。";
+        scoreSubmitStatus.textContent = t("送出失敗，請檢查網路後再試一次。");
       } finally {
         scoreSubmitBtn.disabled = false;
         scoreClassInput.disabled = false;
@@ -4623,7 +4719,7 @@
       .map((element) => ({ element, source: element.getAttribute("aria-label") }));
 
     function setLanguage(language) {
-      if (!["zh-TW", "en", "ja"].includes(language) || language === currentLanguage) return;
+      if (!["zh-TW", "en", "ja", "vi"].includes(language) || language === currentLanguage) return;
       saveCurrentAttempt();
       currentLanguage = language;
       document.documentElement.lang = language;
@@ -4633,6 +4729,9 @@
       languageBar.querySelectorAll("[data-language]").forEach((button) => {
         button.setAttribute("aria-pressed", String(button.dataset.language === language));
       });
+      scoreNameInput.placeholder = t("請輸入姓名");
+      scoreSeatInput.placeholder = t("例如：12");
+      updateScoreSubmitPreview();
       learningTopBtn.textContent = t(learningActive ? "關閉學習模式" : "學習模式");
       learningToggleBtn.textContent = t(learningActive ? "關閉學習模式" : "開啟學習模式");
       if (learningActive) {
